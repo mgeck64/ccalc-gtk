@@ -11,7 +11,7 @@ floating point (and complex)
 digits)
 ## Dependencies
 This project depends on another of my projects, ccalc-lib. That project provides
-the backend to this project's CLI frontend.
+the backend to this project's GUI frontend.
 - ccalc-lib's header files are assumed to be discoverable in a "ccalc" directory
 in the include search path; e.g., /usr/local/include/ccalc. I have "ccalc" there
 on my system as a symbolic link to my ccalc-lib project directory.
