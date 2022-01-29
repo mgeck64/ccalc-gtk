@@ -9,14 +9,17 @@
 #include <gtkmm/label.h>
 #include <gtkmm/comboboxtext.h>
 
+#include "gcalc_app.hpp"
+
 #include "ccalc/calc_parser.hpp"
 
 class main_window : public Gtk::Window {
 public:
-    main_window(const Glib::RefPtr<Gtk::Application>& app);
+    main_window(gcalc_app& app);
     ~main_window();
 
 private:
+    gcalc_app& app;
     Gtk::Box vbox;
     Gtk::Box expr_hbox;
     Gtk::Box functions_hbox;
@@ -27,8 +30,8 @@ private:
     Gtk::ComboBoxText functions;
     Gtk::Button options_do;
     Gtk::Button help_do;
+
     bool on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType);
-    void on_result_label_pressed(int n_press, double x, double y);
     void on_expr_do_clicked();
     void on_functions_changed();
     void on_options_do_clicked();

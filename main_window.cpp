@@ -1,4 +1,7 @@
 #include "main_window.hpp"
+#include "gcalc_app.hpp"
+#include "gcalc_basics.hpp"
+
 #include <gtkmm/eventcontrollerkey.h>
 #include <gtkmm/gestureclick.h>
 #include <giomm/simpleactiongroup.h>
@@ -8,9 +11,8 @@
 #include "ccalc/calc_outputter.hpp"
 #include "ccalc/calc_parse_error.hpp"
 
-constexpr auto default_margin = 4;
-
-main_window::main_window(const Glib::RefPtr<Gtk::Application>& /*app*/) :
+main_window::main_window(gcalc_app& app_) :
+        app{app_},
         vbox(Gtk::Orientation::VERTICAL),
         expr_hbox(Gtk::Orientation::HORIZONTAL),
         bottom_hbox(Gtk::Orientation::HORIZONTAL),
@@ -41,12 +43,6 @@ main_window::main_window(const Glib::RefPtr<Gtk::Application>& /*app*/) :
     result_label.set_vexpand(true);
     result_label.set_halign(Gtk::Align::START);
     result_label.set_selectable(true);
-    {
-        auto controller = Gtk::GestureClick::create(); // note: returns smart pointer
-        controller->set_button(GDK_BUTTON_PRIMARY);
-        controller->signal_pressed().connect(sigc::mem_fun(*this, &main_window::on_result_label_pressed));
-        result_label.add_controller(controller);
-    }
     vbox.append(result_label);
 
     vbox.append(functions_hbox);
@@ -117,16 +113,6 @@ bool main_window::on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierTy
     }
 }
 
-void main_window::on_result_label_pressed(int, double, double) {
-    if (last_result_was_value) {
-        expr_entry.delete_selection(); // incase there's a selection
-        auto text = result_label.get_text();
-        int cursor_pos = expr_entry.get_position();
-        expr_entry.insert_text(text, text.size(), cursor_pos);
-        expr_entry.grab_focus_without_selecting();
-    }
-}
-
 void main_window::on_expr_do_clicked() {
     evaluate();
     expr_entry.grab_focus_without_selecting();
@@ -145,8 +131,8 @@ void main_window::on_functions_changed()
         expr_entry.set_position(cursor_pos - 1);
     }
 
-    expr_entry.grab_focus_without_selecting();
     functions.set_active(0); // so it will show Functions on exit
+    expr_entry.grab_focus_without_selecting();
 }
 
 void main_window::on_options_do_clicked() {
@@ -156,7 +142,6 @@ void main_window::on_options_do_clicked() {
 
 void main_window::on_help_do_clicked() {
     help();
-    expr_entry.grab_focus_without_selecting();
 }
 
 void main_window::evaluate() {
@@ -195,7 +180,7 @@ void main_window::options() {
     result_label.set_text("Options is not implemented yet.");
     last_result_was_value = false;
 }
+
 void main_window::help() {
-    result_label.set_text("Help is not implemented yet.");
-    last_result_was_value = false;
+    app.help();
 }
