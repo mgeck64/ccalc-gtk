@@ -44,7 +44,7 @@ all: release
 debug: make_dbgdir $(DBGEXE)
 
 $(DBGEXE): $(DBGOBJS)
-		$(CCXX) -o $(DBGEXE) $^ $(GTKLIBS) -lccalc-dbg
+		$(CCXX) -o $(DBGEXE) $^ -lccalc-dbg $(GTKLIBS)
 
 -include $(DBGDEPS)
 
@@ -60,7 +60,7 @@ $(DBGDIR)/%.o: %.c
 release: make_reldir $(RELEXE)
 
 $(RELEXE): $(RELOBJS)
-		$(CCXX) -o $(RELEXE) $^ $(GTKLIBS) -lccalc-dbg
+		$(CCXX) -o $(RELEXE) $^ -lccalc-rel $(GTKLIBS)
 
 -include $(RELDEPS)
 

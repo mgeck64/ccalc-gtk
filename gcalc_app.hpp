@@ -3,7 +3,9 @@
 
 #include <gtkmm/application.h>
 #include <gtkmm/window.h>
-#include "help_window.hpp"
+
+class main_window;
+class help_window;
 
 class gcalc_app: public Gtk::Application {
 public:
@@ -12,6 +14,7 @@ public:
     void help();
 
 private:
+    main_window* main_win = 0;
     help_window* help_win = 0;
 
     gcalc_app();

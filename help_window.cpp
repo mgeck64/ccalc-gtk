@@ -1,38 +1,155 @@
 #include "help_window.hpp"
 #include "gcalc_basics.hpp"
+#include <cassert>
 
-help_window::help_window() {
+namespace {
+extern const char quick_start[];
+extern const char representation_types_and_numeric_bases[];
+extern const char scientific_notation[];
+extern const char prefixes[];
+extern const char implied_multiplication[];
+extern const char functions[];
+extern const char bitwise_operators[];
+extern const char variables[];
+extern const char options[];
+constexpr auto num_topics = 9;
+}
+
+help_window::help_window() :
+        vbox(Gtk::Orientation::VERTICAL),
+        top_hbox(Gtk::Orientation::HORIZONTAL),
+        prev_topic("\u25b2"),
+        next_topic("\u25bc") {
     set_default_size(640, 480);
 
-    set_child(frame);
-    frame.set_child(text);
-    frame.set_margin(default_margin);
-    frame.set_expand(true);
+    vbox.set_margin(default_margin);
+    set_child(vbox);
 
-    text.set_margin(default_margin);
-    text.set_expand(true);
-    text.set_selectable(true);
-    text.set_wrap(true);
+    title.set_margin(default_margin);
+    title.set_halign(Gtk::Align::START);
+    title.set_markup("<markup><big><b>Basic guide</b></big></markup>\n");
+    vbox.append(title);
 
-    text.set_markup("\
-<markup>\
-<big><b>Basic guide</b></big>\n\
+    vbox.append(top_hbox);
+
+    topics.set_margin(default_margin);
+    topics.set_hexpand(true);
+    topics.append("Quick Start");
+    topics.append("Representation Types and Numeric Bases");
+    topics.append("Scientific Notation");
+    topics.append("Prefixes");
+    topics.append("Implied Multiplication");
+    topics.append("Functions");
+    topics.append("Bitwise Operators");
+    topics.append("Variables");
+    topics.append("Options");
+    topics.signal_changed().connect(sigc::mem_fun(*this, &help_window::on_topics_changed));
+    top_hbox.append(topics);
+
+    //prev_topic.set_margin(default_margin);
+    prev_topic.set_margin_top(default_margin);
+    prev_topic.set_margin_bottom(default_margin);
+    prev_topic.set_margin_start(default_margin);
+    prev_topic.set_margin_end(0);
+    prev_topic.signal_clicked().connect(sigc::mem_fun(*this, &help_window::on_prev_topic_clicked));
+    top_hbox.append(prev_topic);
+
+    //next_topic.set_margin(default_margin);
+    next_topic.set_margin_top(default_margin);
+    next_topic.set_margin_bottom(default_margin);
+    next_topic.set_margin_end(default_margin);
+    next_topic.set_margin_start(0);
+    next_topic.signal_clicked().connect(sigc::mem_fun(*this, &help_window::on_next_topic_clicked));
+    top_hbox.append(next_topic);
+
+    help_frame.set_child(help_text);
+    help_frame.set_expand(true);
+    vbox.append(help_frame);
+
+    help_text.set_margin(default_margin);
+    help_text.set_valign(Gtk::Align::START);
+    help_text.set_halign(Gtk::Align::START);
+    help_text.set_selectable(true);
+    help_text.set_wrap(true);
+
+    show_topic(0);
+}
+
+void help_window::on_topics_changed() {
+    auto idx = topics.get_active_row_number();
+    show_topic(idx);
+}
+
+void help_window::on_prev_topic_clicked() {
+    auto idx = topics.get_active_row_number();
+    if (idx > 0)
+        show_topic(idx - 1);
+    else if (auto p = get_display())
+        gdk_display_beep(p->gobj());
+}
+
+void help_window::on_next_topic_clicked() {
+    auto idx = topics.get_active_row_number();
+    if (idx < num_topics - 1)
+        show_topic(idx + 1);
+    else if (auto p = get_display())
+        gdk_display_beep(p->gobj());
+}
+
+void help_window::show_topic(int idx) {
+    const char* topic = 0;
+    switch (idx) {
+        case 0: topic = quick_start; break;
+        case 1: topic = representation_types_and_numeric_bases; break;
+        case 2: topic = scientific_notation; break;
+        case 3: topic = prefixes; break;
+        case 4: topic = implied_multiplication; break;
+        case 5: topic = functions; break;
+        case 6: topic = bitwise_operators; break;
+        case 7: topic = variables; break;
+        case 8: topic = options; break;
+    }
+    assert(topic); // idx was invalid if fails
+    if (topic) {
+        topics.set_active(idx);
+        help_text.set_markup(topic);
+    }
+}
+
+namespace {
+const char quick_start[] = 
+"<markup>\
+Enter a mathematical expression in text form; e.g., 2+4*8, which means multiply \
+4 by 8 and add 2 to the result. You can also enter \"help\" to show this help. \n\
 \n\
-Enter a mathematical expression in text form, e.g.: 2+3*6, or enter \"help\" to \
-show this help.\n\
+Basic arithmetic operators:\n\
 \n\
-<b>Basic arithmetic operators</b>\n\
++ Addition and unary plus\n\
+- Subtraction and negation\n\
+* Multiplication\n\
+/ Division\n\
+% Modulus (remainder)\n\
+^ or ** Exponentiation (right associative)\n\
+! Factorial\n\
+!! Double factorial\n\
 \n\
-<b>+</b> (addition and unary plus), <b>-</b> (subtraction and negation), <b>*</b> (multiplication), \
-<b>/</b> (division), <b>%</b> (modulus), <b>^</b> or <b>**</b> (exponentiation), <b>!</b> (factorial), <b>!!</b> (double \
-factorial) <b>(</b> and <b>)</b> (grouping)\n\
+Grouping:\n\
 \n\
-<b>Available symbolic values</b>\n\
+Use parentheses to group subexpressions; e.g., (2+4)*8 means add 2 to 4 and \
+multiply the result by 8.\n\
 \n\
-pi, e (Euler's number), i (imaginary unit), last (last result); e.g., e^(i*pi)+1\n\
+Available symbolic values:\n\
 \n\
-<b>Representation types and numeric bases</b>\n\
+pi - Did you know that March 14 is Pi day?\n\
+e - Euler's number\n\
+i - Imaginary unit\n\
+last - The last result\n\
 \n\
+Example: e^(i*pi)+1\
+</markup>";
+
+const char representation_types_and_numeric_bases[] =
+"<markup>\
 This calculator can process numbers of complex type, signed integer type and \
 unsigned integer type. By default, it processes numbers of complex type.\n\
 \n\
@@ -48,10 +165,11 @@ This calculator can accept and output numbers in binary, octal, decimal, or \
 hexadecimal numeric base. By default, it accepts and outputs numbers in decimal \
 numeric base.\n\
 \n\
-How to work with other representations and bases is explained later.\n\
-\n\
-<b>Scientific notation</b>\n\
-\n\
+How to work with other representations and bases is explained later.\
+</markup>";
+
+const char scientific_notation[] =
+"<markup>\
 Decimal numbers may be specified in scientific E notion; e.g., the decimal \
 number 1e10 (or 1e+10) is equivalent to 10000000000.\n\
 \n\
@@ -67,10 +185,11 @@ this notion of normalization is different than for standard scientific notation.
 \n\
 Example: 1.ap10 is a number in normalized hexadecimal scientific P notation \
 equal to 6.8p8 in unnormalized hexadecimal scientific P notation and 680 in \
-plain hexadecimal.\n\
-\n\
-<b>Prefixes</b>\n\
-\n\
+plain hexadecimal.\
+</markup>";
+
+const char prefixes[] =
+"<markup>\
 A number may optionally be given a prefix to specify its numeric base and \
 representation type:\n\
 \n\
@@ -97,10 +216,11 @@ Examples: The following are different ways of expressing the number 314: \
 signed integer type), 0b1.0011101p+8 (normalized binary complex type), 0o472.0 \
 (octal complex type), 0o1.164p+8 (normalized octal complex type), 0d3.14e+2 \
 (decimal complex type), 0x13a.0 (hexadecimal complex type), 0x1.3ap+8 \
-(normalized hexadecimal complex type).\n\
-\n\
-<b>Implied multiplication</b>\n\
-\n\
+(normalized hexadecimal complex type).\
+</markup>";
+
+const char implied_multiplication[] =
+"<markup>\
 Implied multiplication (multiplication by juxtaposition) is supported and has \
 the same precedence as explicit mulitiplication, e.g,, 6(2pi)sin(3) is valid and \
 is equivalent to 6*(2*pi)*sin(3); but there are some cavaets:\n\
@@ -110,10 +230,11 @@ e.g., 2pi means multiply 2 by pi, not multiply 2 by p and then by i.\n\
 \n\
 - Scientific notation has precedence; e.g., 1e10 means 10000000000, not 1*e10.\n\
 \n\
-- Prefix has precedence; e.g., 0d10 means signed integer decimal base 10, not 0*d10.\n\
-\n\
-<b>Functions</b>\n\
-\n\
+- Prefix has precedence; e.g., 0d10 means signed integer decimal base 10, not 0*d10.\
+</markup>";
+
+const char functions[] =
+"<markup>\
 exp - e raised to the power of the argument\n\
 ln - Natural (base e) log\n\
 log10 - Base 10 log\n\
@@ -139,21 +260,27 @@ norm - Squared magnitude\n\
 conj - Conjugate\n\
 proj - Projection onto the Riemann sphere\n\
 \n\
-Function arguments are enclosed in parentheses. Example: sin(pi)\n\
+Function arguments are enclosed in parentheses. Example: sin(pi)\
+</markup>";
+
+const char bitwise_operators[] =
+"<markup>\
+~ Not\n\
+&amp; And\n\
+| Or\n\
+^| Xor\n\
+&lt;&lt; Shift left\n\
+&gt;&gt; Shift right; algebraic for signed integer type\n\
 \n\
-<b>Bitwise operators</b>\n\
-\n\
-<b>~</b> (not), <b>&amp;</b> (and), <b>|</b> (or), <b>^|</b> (xor), <b>&lt;&lt;</b> and <b>&gt;&gt;</b> \
-(shift; algebraic for signed type)\n\
-\n\
-Note: unlike C, C++ and many other programming languages, <b>^</b> means exponentiation \
-here, not bitwise xor; use <b>^|</b> instead for bitwise xor.\n\
+Note: unlike C, C++ and many other programming languages, ^ means exponentiation \
+here, not bitwise xor; use ^| instead for bitwise xor.\n\
 \n\
 Note 2: When applied to complex type numbers, the calculator will attempt to \
-convert them internally into integer type numbers if possible.\n\
-\n\
-<b>Variables</b>\n\
-\n\
+convert them internally into integer type numbers if possible.\
+</markup>";
+
+const char variables[] =
+"<markup>\
 Variables can be created and used in expressions, e.g.:\n\
 \n\
 approx_pi=22/7\n\
@@ -162,10 +289,11 @@ approx_pi*r^2\n\
 \n\
 Variable assignments can be chained, e.g.: x=y=2 assigns 2 to both x and y.\n\
 \n\
-A variable can be deleted with the delete command, e.g., delete x.\n\
-\n\
-<b>Options</b>\n\
-\n\
+A variable can be deleted with the delete command, e.g., delete x.\
+</markup>";
+
+const char options[] =
+"<markup>\
 Options may be specified textually or from the UI.\n\
 \n\
 <i>Input defaults</i>\n\
@@ -239,13 +367,6 @@ Specifies the word size for integer types:\n\
 Note: This does not affect complex type numbers.\n\
 \n\
 Note 2: Integer calculations are always performed internally in 128 bit\n\
-precision and then truncated to the active word size. \
-</markup>\
-");
-
-    text.grab_focus(); text.select_region(0, 0); // inexplicably, the text is being unwantedly selected by default
-    frame.grab_focus(); // hides the cursor
-}
-
-help_window::~help_window() {
-}
+precision and then truncated to the active word size.\
+</markup>";
+} // anonymous namespace

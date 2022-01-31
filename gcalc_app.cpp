@@ -1,6 +1,8 @@
 #include "gcalc_app.hpp"
-#include "main_window.hpp"
 #include <glibmm/miscutils.h>
+
+#include "main_window.hpp"
+#include "help_window.hpp"
 
 gcalc_app::gcalc_app() : Gtk::Application("ccalc-gtk.mgeck64.com.github") {
     Glib::set_application_name("gcalc");
@@ -11,19 +13,21 @@ Glib::RefPtr<gcalc_app> gcalc_app::create() {
 }
 
 void gcalc_app::on_activate() {
-    auto win = new main_window(*this);
-    add_window(*win);
+    main_win = new main_window(*this);
+    add_window(*main_win);
 
-    win->signal_unrealize().connect(sigc::bind(sigc::mem_fun(*this, &gcalc_app::on_window_hide), win));
-    win->show();
+    main_win->signal_unrealize().connect(sigc::bind(sigc::mem_fun(*this, &gcalc_app::on_window_hide), main_win));
+    main_win->show();
 }
 
 void gcalc_app::on_window_hide(Gtk::Window* win) {
     assert(win);
     remove_window(*win);
-    delete win;
-    if (win == help_win)
+    if (win == main_win)
+        main_win = 0;
+    else if (win == help_win)
         help_win = 0;
+    delete win;
 }
 
 void gcalc_app::help() {
@@ -38,5 +42,6 @@ void gcalc_app::help() {
 }
 
 gcalc_app::~gcalc_app() {
+    delete main_win;
     delete help_win;
 }
