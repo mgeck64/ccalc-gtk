@@ -322,7 +322,7 @@ void options_window::on_options_changed() {
 }
 
 void options_window::on_help_clicked() {
-    app.help(this, help_window::options_idx, true);
+    app.help(this, help_window::options_idx, /*force_topic*/ true);
 }
 
 void options_window::on_cancel_clicked() {
