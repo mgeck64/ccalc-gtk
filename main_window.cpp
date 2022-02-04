@@ -236,17 +236,18 @@ void main_window::evaluate() {
         return;
     }
 
+    calc_args options;
     try {
         auto result = parser.evaluate(
             std::string_view(expr_str.data(), expr_str.size()),
             std::bind(&main_window::on_help_do_clicked, this),
-            out_options);
+            out_options,
+            &options);
         std::ostringstream out;
         out << calc_outputter(out_options)(result);
         result_label.set_text(out.str());
         last_result_parse_error = false;
         expr_entry.set_text(Glib::ustring());
-        show_in_out_info();
     } catch (const calc_parse_error& e) {
         expr_entry.select_region(e.token().view_offset, e.token().view_offset + e.token().view.size());
         result_label.set_text(e.error_str());
@@ -257,6 +258,8 @@ void main_window::evaluate() {
             result_label.set_text(Glib::ustring());
             last_result_parse_error = false;
         }
-        show_in_out_info();
     }
+    show_in_out_info();
+    if (app.options_win())
+        app.options_win()->update_from(options);
 }

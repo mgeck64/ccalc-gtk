@@ -140,65 +140,86 @@ options_window::options_window(gcalc_app& app_) :
     message.set_hide_on_close(true);
     message.signal_response().connect(sigc::hide(sigc::mem_fun(message, &Gtk::Widget::hide)));
 
-    setup_from_options_from_main_win();
+    {
+        calc_args options;
+        if (auto main_win = app.main_win()) {
+            auto [parse_options, out_options] = main_win->options();
+            options.default_number_type_code = parse_options.default_number_type_code;
+            options.default_number_radix = parse_options.default_number_radix;
+            options.output_radix = out_options.output_radix;
+            options.output_fp_normalized = out_options.output_fp_normalized;
+            options.precision = out_options.precision;
+            options.int_word_size = parse_options.int_word_size;
+        }
+        options.n_default_options = 1;
+        options.n_output_options = 1;
+        options.n_output_fp_normalized_options = 1;
+        options.n_precision_options = 1;
+        options.n_int_word_size_options = 1;
+        update_from(options);
+    }
+
     show_option(0);
 }
 
-void options_window::setup_from_options_from_main_win() {
-    auto main_win = app.main_win();
-    if (!main_win)
-        return;
+void options_window::update_from(const calc_args& options) {
+    // update widgets for values in args that have been set (its corresponding
+    // counter will be non-zero; see calc_parser::evaluate); thus any other
+    // pending changes by the user will be preserved
 
-    auto [parse_options, out_options] = main_win->options();
+    if (options.n_default_options)
+        switch (options.default_number_type_code) {
+            case calc_val::int_code:
+                switch (options.default_number_radix) {
+                    case calc_val::base2:  option_0bi.set_active(true); break;
+                    case calc_val::base8:  option_0oi.set_active(true); break;
+                    case calc_val::base10: option_0di.set_active(true); break;
+                    case calc_val::base16: option_0xi.set_active(true); break;
+                }
+                break;
+            case calc_val::uint_code:
+                switch (options.default_number_radix) {
+                    case calc_val::base2:  option_0bu.set_active(true); break;
+                    case calc_val::base8:  option_0ou.set_active(true); break;
+                    case calc_val::base10: option_0du.set_active(true); break;
+                    case calc_val::base16: option_0xu.set_active(true); break;
+                }
+                break;
+            case calc_val::complex_code:
+                switch (options.default_number_radix) {
+                    case calc_val::base2:  option_0bn.set_active(true); break;
+                    case calc_val::base8:  option_0on.set_active(true); break;
+                    case calc_val::base10: option_0dn.set_active(true); break;
+                    case calc_val::base16: option_0xn.set_active(true); break;
+                }
+                break;
+        }
 
-    switch (parse_options.default_number_type_code) {
-        case calc_val::int_code:
-            switch (parse_options.default_number_radix) {
-                case calc_val::base2:  option_0bi.set_active(true); break;
-                case calc_val::base8:  option_0oi.set_active(true); break;
-                case calc_val::base10: option_0di.set_active(true); break;
-                case calc_val::base16: option_0xi.set_active(true); break;
-            }
-            break;
-        case calc_val::uint_code:
-            switch (parse_options.default_number_radix) {
-                case calc_val::base2:  option_0bu.set_active(true); break;
-                case calc_val::base8:  option_0ou.set_active(true); break;
-                case calc_val::base10: option_0du.set_active(true); break;
-                case calc_val::base16: option_0xu.set_active(true); break;
-            }
-            break;
-        case calc_val::complex_code:
-            switch (parse_options.default_number_radix) {
-                case calc_val::base2:  option_0bn.set_active(true); break;
-                case calc_val::base8:  option_0on.set_active(true); break;
-                case calc_val::base10: option_0dn.set_active(true); break;
-                case calc_val::base16: option_0xn.set_active(true); break;
-            }
-            break;
-    }
+    if (options.n_output_options)
+        switch (options.output_radix) {
+            case calc_val::base2:  option_ob.set_active(true); break;
+            case calc_val::base8:  option_oo.set_active(true); break;
+            case calc_val::base10: option_od.set_active(true); break;
+            case calc_val::base16: option_ox.set_active(true); break;
+        }
 
-    switch (out_options.output_radix) {
-        case calc_val::base2:  option_ob.set_active(true); break;
-        case calc_val::base8:  option_oo.set_active(true); break;
-        case calc_val::base10: option_od.set_active(true); break;
-        case calc_val::base16: option_ox.set_active(true); break;
-    }
+    if (options.n_output_fp_normalized_options)
+        switch (options.output_fp_normalized) {
+            case true:  option_pn.set_active(true); break;
+            case false: option_pu.set_active(true); break;
+        }
 
-    switch (out_options.output_fp_normalized) {
-        case true:  option_pn.set_active(true); break;
-        case false: option_pu.set_active(true); break;
-    }
+    if (options.n_precision_options)
+        option_pr_entry.set_text(std::to_string(options.precision));
 
-    option_pr_entry.set_text(std::to_string(out_options.precision));
-
-    switch (parse_options.int_word_size) {
-        case calc_val::int_bits_8:   option_w8.set_active(true); break;
-        case calc_val::int_bits_16:  option_w16.set_active(true); break;
-        case calc_val::int_bits_32:  option_w32.set_active(true); break;
-        case calc_val::int_bits_64:  option_w64.set_active(true); break;
-        case calc_val::int_bits_128: option_w128.set_active(true); break;
-    }
+    if (options.n_int_word_size_options)
+        switch (options.int_word_size) {
+            case calc_val::int_bits_8:   option_w8.set_active(true); break;
+            case calc_val::int_bits_16:  option_w16.set_active(true); break;
+            case calc_val::int_bits_32:  option_w32.set_active(true); break;
+            case calc_val::int_bits_64:  option_w64.set_active(true); break;
+            case calc_val::int_bits_128: option_w128.set_active(true); break;
+        }
 }
 
 void options_window::show_option(int idx) {

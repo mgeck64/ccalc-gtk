@@ -76,7 +76,7 @@ class options_window : public Gtk::Window {
 
 public:
     options_window(gcalc_app& app);
-    void setup_from_options_from_main_win();
+    void update_from(const calc_args& options);
 };
 
 #endif // OPTIONS_DIALOG_HPP
