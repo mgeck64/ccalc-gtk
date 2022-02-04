@@ -1,8 +1,9 @@
 #include "main_window.hpp"
 #include "gcalc_app.hpp"
 #include "gcalc_basics.hpp"
+#include "help_window.hpp"
+#include "options_window.hpp"
 
-//#include <iostream>
 #include "ccalc/calc_parse_error.hpp"
 #include "ccalc/calc_outputter.hpp"
 
@@ -12,17 +13,22 @@
 #include <giomm/menu.h>
 
 main_window::main_window(gcalc_app& app_) :
-        app{app_},
-        vbox(Gtk::Orientation::VERTICAL),
-        expr_hbox(Gtk::Orientation::HORIZONTAL),
-        menus_hbox(Gtk::Orientation::HORIZONTAL),
-        expr_do("="),
-        out_options(args),
-        parser(args.default_number_type_code, args.default_number_radix, args.int_word_size) {
-    set_child(vbox);
-    vbox.set_margin(default_margin);
+    app{app_},
+    win_vbox(Gtk::Orientation::VERTICAL),
+    content_vbox(Gtk::Orientation::VERTICAL),
+    expr_hbox(Gtk::Orientation::HORIZONTAL),
+    in_out_info_hbox(Gtk::Orientation::HORIZONTAL),
+    menus_hbox(Gtk::Orientation::HORIZONTAL),
+    expr_do("="),
+    out_options(args),
+    parser(args.default_number_type_code, args.default_number_radix, args.int_word_size)
+ {
+    set_child(win_vbox);
 
-    vbox.append(expr_hbox);
+    win_vbox.append(content_vbox);
+    content_vbox.set_margin(default_margin);
+
+    content_vbox.append(expr_hbox);
 
     expr_entry.set_margin(default_margin);
     expr_entry.set_hexpand(true);
@@ -42,9 +48,19 @@ main_window::main_window(gcalc_app& app_) :
     result_label.set_vexpand(true);
     result_label.set_halign(Gtk::Align::START);
     result_label.set_selectable(true);
-    vbox.append(result_label);
+    content_vbox.append(result_label);
 
-    vbox.append(menus_hbox);
+    content_vbox.append(in_out_info_hbox);
+    in_out_info_hbox.append(in_info_label);
+    in_out_info_hbox.append(out_info_label);
+    in_info_label.set_margin(default_margin);
+    in_info_label.set_hexpand(true);
+    in_info_label.set_halign(Gtk::Align::START);
+    out_info_label.set_margin(default_margin);
+    out_info_label.set_hexpand(true);
+    out_info_label.set_halign(Gtk::Align::END);
+
+    win_vbox.append(menus_hbox);
     {
         auto functions_action_group = Gio::SimpleActionGroup::create();
         insert_action_group("function", functions_action_group);
@@ -56,7 +72,7 @@ main_window::main_window(gcalc_app& app_) :
 
         functions_a_do.set_label("Funcs");
         functions_a_do.set_tooltip_text("General Functons");
-        functions_a_do.set_margin(default_margin);
+        functions_a_do.set_margin(0);
         functions_a_do.set_hexpand(true);
 
         functions_a_menu = Gio::Menu::create();
@@ -78,7 +94,7 @@ main_window::main_window(gcalc_app& app_) :
         add_action(*functions_a_menu, "proj() - Projection onto the Riemann sphere", "proj", "function.proj");
 
         functions_b_do.set_label("Trig Funcs");
-        functions_b_do.set_margin(default_margin);
+        functions_b_do.set_margin(0);
         functions_b_do.set_tooltip_text("Trigonometric Functons");
         functions_b_do.set_hexpand(true);
 
@@ -106,7 +122,7 @@ main_window::main_window(gcalc_app& app_) :
         insert_action_group("more", more_action_group);
 
         more_do.set_label("More");
-        more_do.set_margin(default_margin);
+        more_do.set_margin(0);
         more_do.set_hexpand(false);
 
         more_menu = Gio::Menu::create();
@@ -123,6 +139,38 @@ main_window::main_window(gcalc_app& app_) :
         more_action_group->add_action("help", sigc::mem_fun(*this, &main_window::on_help_do_clicked));
         more_menu->append("Help", "more.help");
     }
+
+    show_in_out_info();
+}
+
+void main_window::show_in_out_info() {
+    auto parse_options = parser.options();
+
+    Glib::ustring buf;
+    buf.reserve(128);
+
+    buf = "Input: ";
+    switch (parse_options.default_number_type_code) {
+        case calc_val::int_code: buf += "int "; break;
+        case calc_val::uint_code: buf += "uint "; break;
+        case calc_val::complex_code: buf += "cplx "; break;
+    }
+    switch (parse_options.default_number_radix) {
+        case calc_val::base2: buf += "binary"; break;
+        case calc_val::base8: buf += "octal"; break;
+        case calc_val::base10: buf += "decimal"; break;
+        case calc_val::base16: buf += "hex"; break;
+    }
+    in_info_label.set_text(buf);
+
+    buf = "Output: ";
+    switch (out_options.output_radix) {
+        case calc_val::base2: buf += "binary"; break;
+        case calc_val::base8: buf += "octal"; break;
+        case calc_val::base10: buf += "decimal"; break;
+        case calc_val::base16: buf += "hex"; break;
+    }
+    out_info_label.set_text(buf);
 }
 
 bool main_window::on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType) {
@@ -165,17 +213,18 @@ void main_window::on_function_action(const char* label) {
 }
 
 void main_window::on_options_do_clicked() {
-    options();
+    app.options(); 
     expr_entry.grab_focus_without_selecting();
 }
 
 void main_window::on_variables_do_clicked() {
-    show_variables();
+    result_label.set_text("Show variables UI is not implemented yet.");
+    last_result_parse_error = false;
     expr_entry.grab_focus_without_selecting();
 }
 
 void main_window::on_help_do_clicked() {
-    help();
+    app.help(this, help_window::quick_start_idx, false);
     expr_entry.grab_focus_without_selecting();
 }
 
@@ -190,34 +239,24 @@ void main_window::evaluate() {
     try {
         auto result = parser.evaluate(
             std::string_view(expr_str.data(), expr_str.size()),
-            std::bind(&main_window::help, this),
+            std::bind(&main_window::on_help_do_clicked, this),
             out_options);
         std::ostringstream out;
         out << calc_outputter(out_options)(result);
         result_label.set_text(out.str());
-        last_result_was_value = true;
+        last_result_parse_error = false;
         expr_entry.set_text(Glib::ustring());
+        show_in_out_info();
     } catch (const calc_parse_error& e) {
         expr_entry.select_region(e.token().view_offset, e.token().view_offset + e.token().view.size());
         result_label.set_text(e.error_str());
-        last_result_was_value = false;
+        last_result_parse_error = true;
     } catch (const calc_parser::void_expression) {
         expr_entry.set_text(Glib::ustring());
-        if (!last_result_was_value)
-            result_label.set_text(Glib::ustring()); // clear error message
+        if (last_result_parse_error) {
+            result_label.set_text(Glib::ustring());
+            last_result_parse_error = false;
+        }
+        show_in_out_info();
     }
-}
-
-void main_window::options() {
-    result_label.set_text("Options is not implemented yet.");
-    last_result_was_value = false;
-}
-
-void main_window::show_variables() {
-    result_label.set_text("Show variables is not implemented yet.");
-    last_result_was_value = false;
-}
-
-void main_window::help() {
-    app.help();
 }

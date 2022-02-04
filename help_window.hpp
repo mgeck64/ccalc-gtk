@@ -10,7 +10,13 @@
 
 class help_window : public Gtk::Window {
 public:
-    help_window();
+    enum topic_idxs {quick_start_idx, representation_types_and_numeric_bases_idx,
+        input_output_information_area_idx, scientific_notation_idx, prefixes_idx,
+        implied_multiplication_idx, functions_idx, bitwise_operators_idx,
+        variables_idx, options_idx, num_topics};
+
+    help_window(int topic_idx);
+    void show_topic(int topic_idx);
 
 private:
     Gtk::Box vbox;
@@ -22,11 +28,11 @@ private:
     Gtk::ScrolledWindow help_frame;
     Gtk::Label help_text;
 
+    int last_topic_idx = -1;
+
     void on_topics_changed();
     void on_prev_topic_clicked();
     void on_next_topic_clicked();
-
-    void show_topic(int idx);
 };
 
 #endif // HELP_WINDOW_HPP

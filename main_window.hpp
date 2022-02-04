@@ -1,5 +1,5 @@
-#ifndef MAIN_WINDOW_H
-#define MAIN_WINDOW_H
+#ifndef MAIN_WINDOW_HPP
+#define MAIN_WINDOW_HPP
 
 #include "gcalc_app.hpp"
 
@@ -13,26 +13,29 @@
 #include <gtkmm/menubutton.h>
 #include <gtkmm/label.h>
 #include <gtkmm/comboboxtext.h>
-#include <gtkmm/popover.h>
-#include <gtkmm/listbox.h>
-#include <gtkmm/actionbar.h>
-
-struct gio_menu : public Gio::Menu {
-    gio_menu() {} // make protected ctor public
-};
 
 class main_window : public Gtk::Window {
 public:
     main_window(gcalc_app& app);
 
+    std::tuple<parser_options, output_options> options() const
+    {return std::make_tuple(parser.options(), out_options);}
+
+    void options(const parser_options& parse_options, const output_options& out_options_)
+    {parser.options(parse_options); out_options = out_options_;}
+
 private:
     gcalc_app& app;
-    Gtk::Box vbox;
+    Gtk::Box win_vbox;
+    Gtk::Box content_vbox;
     Gtk::Box expr_hbox;
+    Gtk::Box in_out_info_hbox;
     Gtk::Box menus_hbox;
     Gtk::Entry expr_entry;
     Gtk::Button expr_do;
     Gtk::Label result_label;
+    Gtk::Label in_info_label;
+    Gtk::Label out_info_label;
     Gtk::MenuButton functions_a_do;
     Gtk::MenuButton functions_b_do;
     Glib::RefPtr<Gio::ActionGroup> functions_action_group;
@@ -42,6 +45,7 @@ private:
     Gtk::MenuButton more_do;
     Glib::RefPtr<Gio::Menu> more_menu;
 
+    void show_in_out_info();
     bool on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType);
     void on_expr_do_clicked();
     void on_function_action(const char* label);
@@ -52,12 +56,8 @@ private:
     calc_args args;
     output_options out_options;
     calc_parser parser;
-    bool last_result_was_value = false;
+    bool last_result_parse_error = false;
     void evaluate();
-
-    void options();
-    void show_variables();
-    void help();
 };
 
-#endif // MAIN_WINDOW_H
+#endif // MAIN_WINDOW_HPP
