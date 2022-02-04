@@ -24,6 +24,7 @@ class options_window : public Gtk::Window {
     Gtk::Box option_vbox;
     Gtk::Box buttons_hbox;
     Gtk::Button help;
+    Gtk::Button defaults;
     Gtk::Button accept;
     Gtk::Button cancel;
 
@@ -70,13 +71,14 @@ class options_window : public Gtk::Window {
     void on_next_option_clicked();
     void on_help_clicked();
     void on_cancel_clicked();
+    void on_defaults_clicked();
     void on_accept_clicked();
 
     Gtk::MessageDialog message;
 
 public:
     options_window(gcalc_app& app);
-    void update_from(const calc_args& options);
+    void update_from(const calc_args& options, bool force = false);
 };
 
 #endif // OPTIONS_DIALOG_HPP
