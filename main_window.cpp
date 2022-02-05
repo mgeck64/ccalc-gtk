@@ -173,6 +173,48 @@ void main_window::show_in_out_info() {
     out_info_label.set_text(buf);
 }
 
+void main_window::append_history(const Glib::ustring& expr_str) {
+    if (is_blank(expr_str))
+        return;
+    static_assert(max_history_size > 0);
+    if (history.size() >= max_history_size)
+        history.erase(history.begin());
+    history.push_back(expr_str);
+    history_idx = history.size(); // 1 past last so pressing up-arrow will recover it
+}
+
+void main_window::recall_history(bool direction_up) {
+    bool beep_and_return = false;
+
+    if (direction_up) {
+        if (history_idx > 0)
+            --history_idx;
+        else
+            beep_and_return = true;
+    } else {
+        if (history_idx < history.size()) // allow 1 past last element
+            ++history_idx;
+        else
+            beep_and_return = true;
+    }
+
+    if (beep_and_return) {
+        if (auto p = get_display())
+            gdk_display_beep(p->gobj());
+        return;
+    }
+
+    static_assert(std::is_unsigned_v<decltype(history_idx)>);
+    if (history_idx < history.size()) {
+        const auto& text = history[history_idx];
+        expr_entry.set_text(text);
+        expr_entry.set_position(text.size());
+    } else
+        expr_entry.set_text(Glib::ustring());
+    result_label.set_text(Glib::ustring());
+    last_result_parse_error = false;
+}
+
 bool main_window::on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType) {
     switch (keyval) {
         case GDK_KEY_Return:
@@ -190,6 +232,12 @@ bool main_window::on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierTy
             }
             return false;
         }
+        case GDK_KEY_Up:
+            recall_history(/*direction_up*/ true);
+            return true;
+        case GDK_KEY_Down:
+            recall_history(/*direction_up*/ false);
+            return true;
         default:
             return false;
     }
@@ -248,16 +296,18 @@ void main_window::evaluate() {
         result_label.set_text(out.str());
         last_result_parse_error = false;
         expr_entry.set_text(Glib::ustring());
+        append_history(expr_str);
     } catch (const calc_parse_error& e) {
         expr_entry.select_region(e.token().view_offset, e.token().view_offset + e.token().view.size());
         result_label.set_text(e.error_str());
         last_result_parse_error = true;
-    } catch (const calc_parser::void_expression) {
+    } catch (const calc_parser::void_expression) { // this is not an error
         expr_entry.set_text(Glib::ustring());
         if (last_result_parse_error) {
             result_label.set_text(Glib::ustring());
             last_result_parse_error = false;
         }
+        append_history(expr_str);
     }
     show_in_out_info();
     if (app.options_win())

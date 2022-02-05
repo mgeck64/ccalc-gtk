@@ -14,6 +14,8 @@
 #include <gtkmm/label.h>
 #include <gtkmm/comboboxtext.h>
 
+#include <vector>
+
 class main_window : public Gtk::Window {
 public:
     main_window(gcalc_app& app);
@@ -46,6 +48,8 @@ private:
     Glib::RefPtr<Gio::Menu> more_menu;
 
     void show_in_out_info();
+    void append_history(const Glib::ustring& expr_str);
+    void recall_history(bool direction_up);
     bool on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType);
     void on_expr_do_clicked();
     void on_function_action(const char* label);
@@ -58,6 +62,11 @@ private:
     calc_parser parser;
     bool last_result_parse_error = false;
     void evaluate();
+
+    using history_list = std::vector<Glib::ustring>;
+    history_list history;
+    history_list::size_type history_idx = 0;
+    static constexpr history_list::size_type max_history_size = 32;
 };
 
 #endif // MAIN_WINDOW_HPP
