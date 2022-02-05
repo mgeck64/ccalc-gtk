@@ -12,6 +12,11 @@
 #include <gtkmm/actionbar.h>
 
 class options_window : public Gtk::Window {
+public:
+    options_window(gcalc_app& app);
+    auto update_from(const calc_args& options, bool force = false) -> void;
+
+private:
     gcalc_app& app;
     Gtk::Box win_vbox;
     Gtk::Box content_vbox;
@@ -27,11 +32,6 @@ class options_window : public Gtk::Window {
     Gtk::Button defaults;
     Gtk::Button accept;
     Gtk::Button cancel;
-
-    enum option_idxs {none_idx = -1, input_default_idx = 0, output_base_idx,
-         p_notation_idx, precision_idx, integer_word_size_idx, num_options};
-
-    int last_option_idx = none_idx;
 
     Gtk::CheckButton option_0bi;
     Gtk::CheckButton option_0oi;
@@ -64,21 +64,22 @@ class options_window : public Gtk::Window {
     Gtk::CheckButton option_w64;
     Gtk::CheckButton option_w128;
 
-    void show_option(int idx);
+    enum option_idxs {none_idx = -1, input_default_idx = 0, output_base_idx,
+         p_notation_idx, precision_idx, integer_word_size_idx, num_options};
 
-    void on_options_changed();
-    void on_prev_option_clicked();
-    void on_next_option_clicked();
-    void on_help_clicked();
-    void on_cancel_clicked();
-    void on_defaults_clicked();
-    void on_accept_clicked();
+    int last_option_idx = none_idx;
+
+    auto show_option(int idx) -> void;
+
+    auto on_options_changed() -> void;
+    auto on_prev_option_clicked() -> void;
+    auto on_next_option_clicked() -> void;
+    auto on_help_clicked() -> void;
+    auto on_cancel_clicked() -> void;
+    auto on_defaults_clicked() -> void;
+    auto on_accept_clicked() -> void;
 
     Gtk::MessageDialog message;
-
-public:
-    options_window(gcalc_app& app);
-    void update_from(const calc_args& options, bool force = false);
 };
 
 #endif // OPTIONS_DIALOG_HPP

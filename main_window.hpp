@@ -23,7 +23,7 @@ public:
     std::tuple<parser_options, output_options> options() const
     {return std::make_tuple(parser.options(), out_options);}
 
-    void options(const parser_options& parse_options, const output_options& out_options_)
+    auto options(const parser_options& parse_options, const output_options& out_options_) -> void
     {parser.options(parse_options); out_options = out_options_;}
 
 private:
@@ -42,21 +42,21 @@ private:
     Gtk::MenuButton functions_b_btn;
     Gtk::MenuButton more_btn;
 
-    void show_in_out_info();
-    void append_history(const Glib::ustring& expr_str);
-    void recall_history(bool direction_up);
-    bool on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType);
-    void on_expr_btn_clicked();
-    void on_function_action(const char* label);
-    void on_options_btn_clicked();
-    void on_variables_btn_clicked();
-    void on_help_btn_clicked();
+    auto show_in_out_info() -> void;
+    auto append_history(const Glib::ustring& expr_str) -> void;
+    auto recall_history(bool direction_up) -> void;
+    auto on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType) -> bool;
+    auto on_expr_btn_clicked() -> void;
+    auto on_function_action(const char* label) -> void;
+    auto on_options_btn_clicked() -> void;
+    auto on_variables_btn_clicked() -> void;
+    auto on_help_btn_clicked() -> void;
 
     calc_args args;
     output_options out_options;
     calc_parser parser;
     bool last_result_parse_error = false;
-    void evaluate();
+    auto evaluate() -> void;
 
     using history_list = std::vector<Glib::ustring>;
     history_list history;

@@ -1,6 +1,6 @@
 #include "gcalc_basics.hpp"
 
-bool is_blank(const Glib::ustring& str) {
+auto is_blank(const Glib::ustring& str) -> bool {
     for (auto c : str)
         if (!isspace(c))
             return false;

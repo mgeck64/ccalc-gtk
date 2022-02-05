@@ -10,14 +10,14 @@ class options_window;
 
 class gcalc_app: public Gtk::Application {
 public:
-    static Glib::RefPtr<gcalc_app> create();
+    static auto create() -> Glib::RefPtr<gcalc_app>;
  
-    void help(Gtk::Window* invoker, int topic_idx, bool force_topic);
-    void options();
+    auto help(Gtk::Window* invoker, int topic_idx, bool force_topic) -> void;
+    auto options() -> void;
 
-    main_window* main_win() {return main_win_.get();}
-    help_window* help_win() {return help_win_.get();}
-    options_window* options_win() {return options_win_.get();}
+    auto main_win() -> main_window* {return main_win_.get();}
+    auto help_win() -> help_window* {return help_win_.get();}
+    auto options_win() -> options_window* {return options_win_.get();}
 
 private:
     std::unique_ptr<main_window> main_win_;
@@ -28,8 +28,8 @@ private:
     bool option_win_invoked_help = false;
 
     gcalc_app();
-    void on_activate();
-    void on_window_unmask(Gtk::Window* win);
+    auto on_activate() -> void;
+    auto on_window_unmask(Gtk::Window* win) -> void;
 };
 
 #endif // GCALC_APP_HPP

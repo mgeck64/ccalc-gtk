@@ -162,7 +162,7 @@ options_window::options_window(gcalc_app& app_) :
     show_option(0);
 }
 
-void options_window::update_from(const calc_args& options, bool force) {
+auto options_window::update_from(const calc_args& options, bool force) -> void {
     // force = true: update all option widgets
     // force = false: update option widgets only for options in args that have
     // been set (its corresponding counter will be non-zero; see
@@ -224,7 +224,7 @@ void options_window::update_from(const calc_args& options, bool force) {
         }
 }
 
-void options_window::show_option(int idx) {
+auto options_window::show_option(int idx) -> void {
     switch (last_option_idx) {
         case input_default_idx:
             option_vbox.remove(option_0bi);
@@ -316,24 +316,24 @@ void options_window::show_option(int idx) {
     }
 }
 
-void options_window::on_options_changed() {
+auto options_window::on_options_changed() -> void {
     auto idx = options.get_active_row_number();
     show_option(idx);
 }
 
-void options_window::on_help_clicked() {
+auto options_window::on_help_clicked() -> void {
     app.help(this, help_window::options_idx, /*force_topic*/ true);
 }
 
-void options_window::on_cancel_clicked() {
+auto options_window::on_cancel_clicked() -> void {
     hide();
 }
 
-void options_window::on_defaults_clicked() {
+auto options_window::on_defaults_clicked() -> void {
     update_from(calc_args(), /*force*/ true);
 }
 
-void options_window::on_accept_clicked() {
+auto options_window::on_accept_clicked() -> void {
     auto main_win = app.main_win();
     assert(main_win);
     if (!main_win) {
@@ -427,7 +427,7 @@ void options_window::on_accept_clicked() {
     hide();
 }
 
-void options_window::on_prev_option_clicked() {
+auto options_window::on_prev_option_clicked() -> void {
     auto idx = options.get_active_row_number();
     if (idx > 0)
         show_option(idx - 1);
@@ -435,7 +435,7 @@ void options_window::on_prev_option_clicked() {
         gdk_display_beep(p->gobj());
 }
 
-void options_window::on_next_option_clicked() {
+auto options_window::on_next_option_clicked() -> void {
     auto idx = options.get_active_row_number();
     if (idx < num_options - 1)
         show_option(idx + 1);

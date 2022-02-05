@@ -71,12 +71,12 @@ help_window::help_window(int topic_idx) :
     show_topic(topic_idx);
 }
 
-void help_window::on_topics_changed() {
+auto help_window::on_topics_changed() -> void {
     auto idx = topics.get_active_row_number();
     show_topic(idx);
 }
 
-void help_window::on_prev_topic_clicked() {
+auto help_window::on_prev_topic_clicked() -> void {
     auto idx = topics.get_active_row_number();
     if (idx > 0)
         show_topic(idx - 1);
@@ -84,7 +84,7 @@ void help_window::on_prev_topic_clicked() {
         gdk_display_beep(p->gobj());
 }
 
-void help_window::on_next_topic_clicked() {
+auto help_window::on_next_topic_clicked() -> void {
     auto idx = topics.get_active_row_number();
     if (idx < num_topics - 1)
         show_topic(idx + 1);
@@ -92,7 +92,7 @@ void help_window::on_next_topic_clicked() {
         gdk_display_beep(p->gobj());
 }
 
-void help_window::show_topic(int topic_idx) {
+auto help_window::show_topic(int topic_idx) -> void {
     if (topic_idx == last_topic_idx)
         return;
     const char* topic = 0;

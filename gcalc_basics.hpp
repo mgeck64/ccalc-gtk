@@ -5,7 +5,7 @@
 
 constexpr auto default_margin = 4;
 
-bool is_blank(const Glib::ustring& str);
+auto is_blank(const Glib::ustring& str) -> bool;
 // returns true if str consists solely of whitespace chars (as defined by
 // isspace()) or is empty; false otherwise
 

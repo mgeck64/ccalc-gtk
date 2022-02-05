@@ -16,7 +16,7 @@ public:
         variables_idx, options_idx, num_topics};
 
     help_window(int topic_idx);
-    void show_topic(int topic_idx);
+    auto show_topic(int topic_idx) -> void;
 
 private:
     Gtk::Box vbox;
@@ -30,9 +30,9 @@ private:
 
     int last_topic_idx = -1;
 
-    void on_topics_changed();
-    void on_prev_topic_clicked();
-    void on_next_topic_clicked();
+    auto on_topics_changed() -> void;
+    auto on_prev_topic_clicked() -> void;
+    auto on_next_topic_clicked() -> void;
 };
 
 #endif // HELP_WINDOW_HPP

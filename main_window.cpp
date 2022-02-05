@@ -122,7 +122,7 @@ main_window::main_window(gcalc_app& app_) :
         insert_action_group("more", more_action_group);
 
         menus_hbox.append(more_btn);
-        more_btn.set_label("More");
+        more_btn.set_icon_name("open-menu-symbolic");
         more_btn.set_margin(0);
         more_btn.set_hexpand(false);
 
@@ -142,7 +142,7 @@ main_window::main_window(gcalc_app& app_) :
     show_in_out_info();
 }
 
-void main_window::show_in_out_info() {
+auto main_window::show_in_out_info() -> void {
     auto parse_options = parser.options();
 
     Glib::ustring buf;
@@ -172,7 +172,7 @@ void main_window::show_in_out_info() {
     out_info_label.set_text(buf);
 }
 
-void main_window::append_history(const Glib::ustring& expr_str) {
+auto main_window::append_history(const Glib::ustring& expr_str) -> void {
     if (is_blank(expr_str))
         return;
     static_assert(max_history_size > 0);
@@ -182,7 +182,7 @@ void main_window::append_history(const Glib::ustring& expr_str) {
     history_idx = history.size(); // 1 past last so pressing up-arrow will recover it
 }
 
-void main_window::recall_history(bool direction_up) {
+auto main_window::recall_history(bool direction_up) -> void {
     bool beep_and_return = false;
 
     if (direction_up) {
@@ -214,7 +214,7 @@ void main_window::recall_history(bool direction_up) {
     last_result_parse_error = false;
 }
 
-bool main_window::on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType) {
+auto main_window::on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType) -> bool {
     switch (keyval) {
         case GDK_KEY_Return:
         case GDK_KEY_KP_Enter:
@@ -242,12 +242,12 @@ bool main_window::on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierTy
     }
 }
 
-void main_window::on_expr_btn_clicked() {
+auto main_window::on_expr_btn_clicked() -> void {
     evaluate();
     expr_entry.grab_focus_without_selecting();
 }
 
-void main_window::on_function_action(const char* label) {
+auto main_window::on_function_action(const char* label) -> void {
     std::string_view text = label;
     auto rparen_pos = text.find(')');
     if (rparen_pos != decltype(text)::npos) {
@@ -259,23 +259,23 @@ void main_window::on_function_action(const char* label) {
     expr_entry.grab_focus_without_selecting();
 }
 
-void main_window::on_options_btn_clicked() {
+auto main_window::on_options_btn_clicked() -> void {
     app.options(); 
     expr_entry.grab_focus_without_selecting();
 }
 
-void main_window::on_variables_btn_clicked() {
+auto main_window::on_variables_btn_clicked() -> void {
     result_label.set_text("Show variables UI is not implemented yet.");
     last_result_parse_error = false;
     expr_entry.grab_focus_without_selecting();
 }
 
-void main_window::on_help_btn_clicked() {
+auto main_window::on_help_btn_clicked() -> void {
     app.help(this, help_window::quick_start_idx, false);
     expr_entry.grab_focus_without_selecting();
 }
 
-void main_window::evaluate() {
+auto main_window::evaluate() -> void {
     auto expr_str = expr_entry.get_text();
 
     if (!expr_str.is_ascii()) {

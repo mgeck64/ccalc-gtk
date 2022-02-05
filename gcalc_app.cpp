@@ -9,11 +9,11 @@ gcalc_app::gcalc_app() : Gtk::Application("ccalc-gtk.mgeck64.com.github") {
     Glib::set_application_name("gcalc");
 }
 
-Glib::RefPtr<gcalc_app> gcalc_app::create() {
+auto gcalc_app::create() -> Glib::RefPtr<gcalc_app> {
     return Glib::make_refptr_for_instance<gcalc_app>(new gcalc_app());
 }
 
-void gcalc_app::on_activate() {
+auto gcalc_app::on_activate() -> void {
     main_win_ = std::make_unique<main_window>(*this);
     add_window(*main_win_);
 
@@ -21,7 +21,7 @@ void gcalc_app::on_activate() {
     main_win_->show();
 }
 
-void gcalc_app::on_window_unmask(Gtk::Window* win) {
+auto gcalc_app::on_window_unmask(Gtk::Window* win) -> void {
     assert(win);
     if (win == main_win_.get()) {
         if (options_win_)
@@ -43,7 +43,7 @@ void gcalc_app::on_window_unmask(Gtk::Window* win) {
     }
 }
 
-void gcalc_app::help(Gtk::Window* invoker, int topic_idx, bool force_topic) {
+auto gcalc_app::help(Gtk::Window* invoker, int topic_idx, bool force_topic) -> void {
     if (help_win_) {
         help_win_->present();
         if (force_topic)
@@ -60,7 +60,7 @@ void gcalc_app::help(Gtk::Window* invoker, int topic_idx, bool force_topic) {
         option_win_invoked_help = true;
 }
 
-void gcalc_app::options() {
+auto gcalc_app::options() -> void {
     if (options_win_)
         options_win_->present();
     else {
