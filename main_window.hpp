@@ -34,28 +34,23 @@ private:
     Gtk::Box in_out_info_hbox;
     Gtk::Box menus_hbox;
     Gtk::Entry expr_entry;
-    Gtk::Button expr_do;
+    Gtk::Button expr_btn;
     Gtk::Label result_label;
     Gtk::Label in_info_label;
     Gtk::Label out_info_label;
-    Gtk::MenuButton functions_a_do;
-    Gtk::MenuButton functions_b_do;
-    Glib::RefPtr<Gio::ActionGroup> functions_action_group;
-    Glib::RefPtr<Gio::Menu> functions_a_menu;
-    Glib::RefPtr<Gio::Menu> functions_b_menu;
-    Glib::RefPtr<Gio::ActionGroup> more_action_group;
-    Gtk::MenuButton more_do;
-    Glib::RefPtr<Gio::Menu> more_menu;
+    Gtk::MenuButton functions_a_btn;
+    Gtk::MenuButton functions_b_btn;
+    Gtk::MenuButton more_btn;
 
     void show_in_out_info();
     void append_history(const Glib::ustring& expr_str);
     void recall_history(bool direction_up);
     bool on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType);
-    void on_expr_do_clicked();
+    void on_expr_btn_clicked();
     void on_function_action(const char* label);
-    void on_options_do_clicked();
-    void on_variables_do_clicked();
-    void on_help_do_clicked();
+    void on_options_btn_clicked();
+    void on_variables_btn_clicked();
+    void on_help_btn_clicked();
 
     calc_args args;
     output_options out_options;
