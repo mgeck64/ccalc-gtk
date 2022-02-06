@@ -43,7 +43,7 @@ options_window::options_window(gcalc_app& app_) :
     option_w32("32 bits (@w32)"),
     option_w64("64 bits (@w64)"),
     option_w128("128 bits (@w128)"),
-    message(*this, "")
+    error_msg(*this, "", /*use_markup*/ false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, /*modal*/ true)
 {
     set_default_size(450, 500);
     set_child(win_vbox);
@@ -142,9 +142,8 @@ options_window::options_window(gcalc_app& app_) :
     option_w64.set_margin(default_margin); option_w64.set_group(option_w8);
     option_w128.set_margin(default_margin); option_w128.set_group(option_w8);
 
-    message.set_modal(true);
-    message.set_hide_on_close(true);
-    message.signal_response().connect(sigc::hide(sigc::mem_fun(message, &Gtk::Widget::hide)));
+    error_msg.set_hide_on_close(true);
+    error_msg.signal_response().connect(sigc::hide(sigc::mem_fun(error_msg, &Gtk::Widget::hide)));
 
     assert(app.main_win());
     if (auto main_win = app.main_win()) {
@@ -404,11 +403,11 @@ auto options_window::on_accept_clicked() -> void {
         if (precision < 0 || !text.is_ascii() || idx != text.size())
             throw std::invalid_argument("Invalid value");
         out_options.precision = precision;
-    } catch (...) {
+    } catch (const std::logic_error&) {
         show_option(precision_idx);
-        message.set_message("Floating point precision value is invalid");
-        message.set_modal(true);
-        message.show();
+        error_msg.set_message("Floating point precision value is invalid");
+        error_msg.set_modal(true);
+        error_msg.show();
         return;
     }
 

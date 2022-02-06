@@ -79,7 +79,7 @@ private:
     auto on_defaults_clicked() -> void;
     auto on_accept_clicked() -> void;
 
-    Gtk::MessageDialog message;
+    Gtk::MessageDialog error_msg;
 };
 
 #endif // OPTIONS_DIALOG_HPP
