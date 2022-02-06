@@ -164,9 +164,10 @@ auto help_window::show_topic(int topic_idx) -> void {
 
 namespace {
 const char quick_start_txt[] = "\
-Type in a mathematical expression in text form; e.g., 2+4*8, which means multiply \
-4 by 8 and add 2 to the result; press Enter or click the = button to perform the \
-calculation. You can also type in \"help\" instead to show this help. \n\
+Type in a mathematical expression in text form into the main input field; press \
+Enter or click the = button to perform the calculation; an example of an \
+expression is 2+4*8, which means multiply 4 by 8 and add 2 to the result. You \
+can also type in \"help\" instead to show this help.\n\
 \n\
 <b>Basic arithmetic operators:</b>\n\
 \n\
@@ -213,10 +214,10 @@ numeric base, but this can be changed via the <b>input defaults</b> and \
 
 const char input_output_information_area_txt[] = "\
 The input/output information area near the bottom of the main window displays \
-the current default representation type and numeric base for numbers that are \
-being input, and the output numeric base for the results of calculations. These \
-properties can be changed via the <b>input defaults</b> and <b>output base</b> \
-options.\n\
+the current default representation type and numeric base being applied to \
+numbers being input, and the output numeric base for the results of \
+calculations. These properties can be changed via the <b>input defaults</b> and \
+<b>output base</b> options.\n\
 \n\
 The following codes are used to report this information:\n\
 \n\
@@ -251,7 +252,7 @@ const char prefixes_txt[] = "\
 A number may optionally be given a prefix to specify its numeric base and \
 representation type, overriding the default ones:\n\
 \n\
-(Note: '0' is the zero character, not uppercase letter O.)\n\
+(Note: '0' is the character zero, not the uppercase letter O.)\n\
 \n\
 0b or 0bi - Signed integer type, binary base; e.g.: 0b1010, 0bi1010\n\
 0o or 0oi - Signed integer type, octal base; e.g.: 0o12, 0oi12\n\
@@ -350,16 +351,23 @@ Variable assignments can be chained; e.g., x=y=2 assigns 2 to both x and y.\n\
 A variable can be deleted with the delete command; e.g., delete x.";
 
 const char options_txt[] = "\
-Options may be specified via the Options window or by typing in their codes; \
-e.g., @0b is the code for the <b>input defaults</b> signed integer type, binary \
-base option.\n\
+Options may be specified via the Options window or by typing their codes into \
+the main input field; e.g., @0b is the code for the <b>input defaults</b> signed \
+integer type, binary base option.\n\
 \n\
 <b>Input defaults:</b>\n\
 \n\
-Specifies the default representation type and numeric base for numbers that are \
-being input:\n\
+Specifies the default representation type and numeric base to apply to numbers \
+being input when either or both properties cannot be determined from the input; \
+e.g., if an inputtted number has neither a prefix nor a decimal point nor an \
+exponent then both defaults will apply to it, othwewise if it has a decimal \
+point or an exponent, but no prefix, then the representation type will be \
+complex type and the default numeric base will apply to it, otherwise if it has \
+a prefix then neither default will apply to it.\n\
 \n\
-(Note: '0' is the zero character, not uppercase letter O.)\n\
+Input defaults options:\n\
+\n\
+(Note: '0' is the character zero, not the uppercase letter O.)\n\
 \n\
 @0b or @0bi - Signed integer type, binary base; e.g.: 1010\n\
 @0o or @0oi - Signed integer type, octal base; e.g.: 12\n\
