@@ -25,8 +25,30 @@ private:
     Gtk::ComboBoxText topics;
     Gtk::Button prev_topic;
     Gtk::Button next_topic;
-    Gtk::ScrolledWindow help_frame;
-    Gtk::Label help_text;
+
+    Gtk::ScrolledWindow quick_start_swin;
+    Gtk::ScrolledWindow representation_types_and_numeric_bases_swin;
+    Gtk::ScrolledWindow input_output_information_area_swin;
+    Gtk::ScrolledWindow scientific_notation_swin;
+    Gtk::ScrolledWindow prefixes_swin;
+    Gtk::ScrolledWindow implied_multiplication_swin;
+    Gtk::ScrolledWindow functions_swin;
+    Gtk::ScrolledWindow bitwise_operators_swin;
+    Gtk::ScrolledWindow variables_swin;
+    Gtk::ScrolledWindow options_swin;
+    Gtk::ScrolledWindow num_topics_swin;
+
+    Gtk::Label quick_start_lbl;
+    Gtk::Label representation_types_and_numeric_bases_lbl;
+    Gtk::Label input_output_information_area_lbl;
+    Gtk::Label scientific_notation_lbl;
+    Gtk::Label prefixes_lbl;
+    Gtk::Label implied_multiplication_lbl;
+    Gtk::Label functions_lbl;
+    Gtk::Label bitwise_operators_lbl;
+    Gtk::Label variables_lbl;
+    Gtk::Label options_lbl;
+    Gtk::Label num_topics_lbl;
 
     int last_topic_idx = -1;
 

@@ -3,16 +3,16 @@
 #include <cassert>
 
 namespace {
-extern const char quick_start[];
-extern const char representation_types_and_numeric_bases[];
-extern const char input_output_information_area[];
-extern const char scientific_notation[];
-extern const char prefixes[];
-extern const char implied_multiplication[];
-extern const char functions[];
-extern const char bitwise_operators[];
-extern const char variables[];
-extern const char options[];
+extern const char quick_start_txt[];
+extern const char representation_types_and_numeric_bases_txt[];
+extern const char input_output_information_area_txt[];
+extern const char scientific_notation_txt[];
+extern const char prefixes_txt[];
+extern const char implied_multiplication_txt[];
+extern const char functions_txt[];
+extern const char bitwise_operators_txt[];
+extern const char variables_txt[];
+extern const char options_txt[];
 }
 
 help_window::help_window(int topic_idx) :
@@ -58,15 +58,32 @@ help_window::help_window(int topic_idx) :
     next_topic.signal_clicked().connect(sigc::mem_fun(*this, &help_window::on_next_topic_clicked));
     top_hbox.append(next_topic);
 
-    help_frame.set_child(help_text);
-    help_frame.set_margin(default_margin);
-    vbox.append(help_frame);
+    {
+        auto setup = [&] (Gtk::ScrolledWindow& swin, Gtk::Label& lbl, const char* txt) {
+            vbox.append(swin);
+            swin.set_margin(default_margin);
+            swin.set_child(lbl);
+            swin.hide();
 
-    help_text.set_expand(true);
-    help_text.set_valign(Gtk::Align::START);
-    help_text.set_halign(Gtk::Align::START);
-    help_text.set_selectable(true);
-    help_text.set_wrap(true);
+            lbl.set_expand(true);
+            lbl.set_valign(Gtk::Align::START);
+            lbl.set_halign(Gtk::Align::START);
+            lbl.set_selectable(true);
+            lbl.set_wrap(true);
+            lbl.set_markup(txt);
+        };
+
+        setup(quick_start_swin, quick_start_lbl, quick_start_txt);
+        setup(representation_types_and_numeric_bases_swin, representation_types_and_numeric_bases_lbl, representation_types_and_numeric_bases_txt);
+        setup(input_output_information_area_swin, input_output_information_area_lbl, input_output_information_area_txt);
+        setup(scientific_notation_swin, scientific_notation_lbl, scientific_notation_txt);
+        setup(prefixes_swin, prefixes_lbl, prefixes_txt);
+        setup(implied_multiplication_swin, implied_multiplication_lbl, implied_multiplication_txt);
+        setup(functions_swin, functions_lbl, functions_txt);
+        setup(bitwise_operators_swin, bitwise_operators_lbl, bitwise_operators_txt);
+        setup(variables_swin, variables_lbl, variables_txt);
+        setup(options_swin, options_lbl, options_txt);
+    }
 
     show_topic(topic_idx);
 }
@@ -95,39 +112,58 @@ auto help_window::on_next_topic_clicked() -> void {
 auto help_window::show_topic(int topic_idx) -> void {
     if (topic_idx == last_topic_idx)
         return;
-    const char* topic = 0;
+
+    switch (last_topic_idx) {
+        case quick_start_idx:
+            quick_start_swin.hide(); break;
+        case representation_types_and_numeric_bases_idx:
+            representation_types_and_numeric_bases_swin.hide(); break;
+        case input_output_information_area_idx:
+            input_output_information_area_swin.hide(); break;
+        case scientific_notation_idx:
+            scientific_notation_swin.hide(); break;
+        case prefixes_idx:
+            prefixes_swin.hide(); break;
+        case implied_multiplication_idx:
+            implied_multiplication_swin.hide(); break;
+        case functions_idx:
+            functions_swin.hide(); break;
+        case bitwise_operators_idx:
+            bitwise_operators_swin.hide(); break;
+        case variables_idx:
+            variables_swin.hide(); break;
+        case options_idx:
+            options_swin.hide(); break;
+    }
+
     switch (topic_idx) {
         case quick_start_idx:
-            topic = quick_start; break;
+            quick_start_swin.show(); break;
         case representation_types_and_numeric_bases_idx:
-            topic = representation_types_and_numeric_bases; break;
+            representation_types_and_numeric_bases_swin.show(); break;
         case input_output_information_area_idx:
-            topic = input_output_information_area; break;
+            input_output_information_area_swin.show(); break;
         case scientific_notation_idx:
-            topic = scientific_notation; break;
+            scientific_notation_swin.show(); break;
         case prefixes_idx:
-            topic = prefixes; break;
+            prefixes_swin.show(); break;
         case implied_multiplication_idx:
-            topic = implied_multiplication; break;
+            implied_multiplication_swin.show(); break;
         case functions_idx:
-            topic = functions; break;
+            functions_swin.show(); break;
         case bitwise_operators_idx:
-            topic = bitwise_operators; break;
+            bitwise_operators_swin.show(); break;
         case variables_idx:
-            topic = variables; break;
+            variables_swin.show(); break;
         case options_idx:
-            topic = options; break;
+            options_swin.show(); break;
     }
-    assert(topic); // topic_idx was invalid if this fails
-    if (topic) {
-        topics.set_active(topic_idx);
-        help_text.set_markup(topic);
-        last_topic_idx = topic_idx;
-    }
+    last_topic_idx = topic_idx;
+    topics.set_active(topic_idx);
 }
 
 namespace {
-const char quick_start[] = "\
+const char quick_start_txt[] = "\
 Type in a mathematical expression in text form; e.g., 2+4*8, which means multiply \
 4 by 8 and add 2 to the result; press Enter or click the = button to perform the \
 calculation. You can also type in \"help\" instead to show this help. \n\
@@ -156,7 +192,7 @@ last - The last result\n\
 \n\
 Example: e^(i*pi)+1";
 
-const char representation_types_and_numeric_bases[] = "\
+const char representation_types_and_numeric_bases_txt[] = "\
 This calculator can process numbers of complex type, signed integer type and \
 unsigned integer type (these are the supported representation types). By \
 default, it processes numbers of complex type, but this can be changed via the \
@@ -175,7 +211,7 @@ hexadecimal numeric base. By default, it inputs and outputs numbers in decimal \
 numeric base, but this can be changed via the <b>input defaults</b> and \
 <b>output base</b> options.";
 
-const char input_output_information_area[] = "\
+const char input_output_information_area_txt[] = "\
 The input/output information area near the bottom of the main window displays \
 the current default representation type and numeric base for numbers that are \
 being input, and the output numeric base for the results of calculations. These \
@@ -192,7 +228,7 @@ octal - Octal numeric base\n\
 decimal - Decimal numeric base\n\
 hex - Hexadecimal numeric base";
 
-const char scientific_notation[] = "\
+const char scientific_notation_txt[] = "\
 Decimal numbers may be specified in scientific E notation; e.g., the decimal \
 number 1e10 (or 1e+10) is equivalent to 10000000000.\n\
 \n\
@@ -211,9 +247,11 @@ Example: 1.ap10 is a number in normalized hexadecimal scientific P notation \
 equal to 6.8p8 in unnormalized hexadecimal scientific P notation and 680 in \
 plain hexadecimal.";
 
-const char prefixes[] = "\
+const char prefixes_txt[] = "\
 A number may optionally be given a prefix to specify its numeric base and \
 representation type, overriding the default ones:\n\
+\n\
+(Note: '0' is the zero character, not uppercase letter O.)\n\
 \n\
 0b or 0bi - Signed integer type, binary base; e.g.: 0b1010, 0bi1010\n\
 0o or 0oi - Signed integer type, octal base; e.g.: 0o12, 0oi12\n\
@@ -240,7 +278,7 @@ signed integer type), 0b1.0011101p+8 (normalized binary complex type), 0o472.0 \
 (decimal complex type), 0x13a.0 (hexadecimal complex type), 0x1.3ap+8 \
 (normalized hexadecimal complex type).";
 
-const char implied_multiplication[] = "\
+const char implied_multiplication_txt[] = "\
 Implied multiplication (multiplication by juxtaposition) is supported and has \
 the same precedence as explicit mulitiplication; e.g., 6(2pi)sin(3) is valid and \
 is equivalent to 6*(2*pi)*sin(3); but there are some cavaets:\n\
@@ -252,7 +290,7 @@ e.g., 2pi means multiply 2 by pi, not multiply 2 by p and then by i.\n\
 \n\
 - Prefix has precedence; e.g., 0d10 means signed integer decimal base 10, not 0*d10.";
 
-const char functions[] = "\
+const char functions_txt[] = "\
 exp - e raised to the power of the argument\n\
 ln - Natural (base e) log\n\
 log10 - Base 10 log\n\
@@ -280,7 +318,7 @@ proj - Projection onto the Riemann sphere\n\
 \n\
 Function arguments are enclosed in parentheses. Example: sin(pi)";
 
-const char bitwise_operators[] = "\
+const char bitwise_operators_txt[] = "\
 Bitwise operators operate on integer type numbers. When applied to complex type \
 numbers, the calculator will attempt to convert them into integer type numbers.\n\
 \n\
@@ -296,7 +334,7 @@ The bitwise operators are:\n\
 Note: Unlike C, C++ and many other programming languages, ^ means exponentiation \
 here, not bitwise xor; use ^| instead for bitwise xor.";
 
-const char variables[] = "\
+const char variables_txt[] = "\
 Variables can be created and used in expressions; e.g.:\n\
 \n\
 approx_pi=22/7\n\
@@ -311,7 +349,7 @@ Variable assignments can be chained; e.g., x=y=2 assigns 2 to both x and y.\n\
 \n\
 A variable can be deleted with the delete command; e.g., delete x.";
 
-const char options[] = "\
+const char options_txt[] = "\
 Options may be specified via the Options window or by typing in their codes; \
 e.g., @0b is the code for the <b>input defaults</b> signed integer type, binary \
 base option.\n\
@@ -320,6 +358,8 @@ base option.\n\
 \n\
 Specifies the default representation type and numeric base for numbers that are \
 being input:\n\
+\n\
+(Note: '0' is the zero character, not uppercase letter O.)\n\
 \n\
 @0b or @0bi - Signed integer type, binary base; e.g.: 1010\n\
 @0o or @0oi - Signed integer type, octal base; e.g.: 12\n\
