@@ -45,7 +45,7 @@ options_window::options_window(gcalc_app& app_) :
     option_w128("128 bits (@w128)"),
     error_msg(*this, "", /*use_markup*/ false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, /*modal*/ true)
 {
-    set_default_size(450, 500);
+    set_default_size(450, 510);
     set_child(win_vbox);
 
     win_vbox.append(content_vbox);
