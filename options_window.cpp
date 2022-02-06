@@ -116,10 +116,12 @@ options_window::options_window(gcalc_app& app_) :
     option_0oi.set_margin_start(dm); option_0oi.set_margin_end(dm); option_0oi.set_group(option_0bi);
     option_0di.set_margin_start(dm); option_0di.set_margin_end(dm); option_0di.set_group(option_0bi);
     option_0xi.set_margin_start(dm); option_0xi.set_margin_end(dm); option_0xi.set_group(option_0bi);
+    option_0bu.set_margin_top(default_margin * 2);
     option_0bu.set_margin_start(dm); option_0bu.set_margin_end(dm); option_0bu.set_group(option_0bi);
     option_0ou.set_margin_start(dm); option_0ou.set_margin_end(dm); option_0ou.set_group(option_0bi);
     option_0du.set_margin_start(dm); option_0du.set_margin_end(dm); option_0du.set_group(option_0bi);
     option_0xu.set_margin_start(dm); option_0xu.set_margin_end(dm); option_0xu.set_group(option_0bi);
+    option_0bn.set_margin_top(default_margin * 2);
     option_0bn.set_margin_start(dm); option_0bn.set_margin_end(dm); option_0bn.set_group(option_0bi);
     option_0on.set_margin_start(dm); option_0on.set_margin_end(dm); option_0on.set_group(option_0bi);
     option_0dn.set_margin_start(dm); option_0dn.set_margin_end(dm); option_0dn.set_group(option_0bi);
