@@ -9,7 +9,6 @@
 #include <gtkmm/label.h>
 #include <gtkmm/checkbutton.h>
 #include <gtkmm/entry.h>
-#include <gtkmm/actionbar.h>
 
 class options_window : public Gtk::Window {
 public:
