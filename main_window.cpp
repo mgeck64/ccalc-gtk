@@ -3,6 +3,7 @@
 #include "gcalc_basics.hpp"
 #include "help_window.hpp"
 #include "options_window.hpp"
+#include "variables_window.hpp"
 
 #include "ccalc/calc_parse_error.hpp"
 #include "ccalc/calc_outputter.hpp"
@@ -265,8 +266,8 @@ auto main_window::on_options_btn_clicked() -> void {
 }
 
 auto main_window::on_variables_btn_clicked() -> void {
-    result_label.set_text("Show variables UI is not implemented yet.");
-    last_result_parse_error = false;
+    app.variables();
+    app.variables_win()->set(parser.variables_begin(), parser.variables_end(), out_options);
     expr_entry.grab_focus_without_selecting();
 }
 
@@ -289,6 +290,7 @@ auto main_window::evaluate() -> void {
             std::string_view(expr_str.data(), expr_str.size()),
             std::bind(&main_window::on_help_btn_clicked, this),
             out_options,
+            std::bind(&main_window::on_variables_changed, this),
             &options);
         std::ostringstream out;
         out << calc_outputter(out_options)(result);
@@ -311,4 +313,9 @@ auto main_window::evaluate() -> void {
     show_in_out_info();
     if (app.options_win())
         app.options_win()->update_from(options);
+}
+
+auto main_window::on_variables_changed() -> void {
+    if (app.variables_win())
+        app.variables_win()->set(parser.variables_begin(), parser.variables_end(), out_options);
 }

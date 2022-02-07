@@ -51,6 +51,7 @@ private:
     auto on_options_btn_clicked() -> void;
     auto on_variables_btn_clicked() -> void;
     auto on_help_btn_clicked() -> void;
+    auto on_variables_changed() -> void;
 
     calc_args args;
     output_options out_options;
