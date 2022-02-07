@@ -1,5 +1,5 @@
-#ifndef OPTIONS_DIALOG_HPP
-#define OPTIONS_DIALOG_HPP
+#ifndef OPTIONS_WINDOW_HPP
+#define OPTIONS_WINDOW_HPP
 
 #include "main_window.hpp"
 
@@ -82,4 +82,4 @@ private:
     Gtk::MessageDialog error_msg;
 };
 
-#endif // OPTIONS_DIALOG_HPP
+#endif // OPTIONS_WINDOW_HPP
