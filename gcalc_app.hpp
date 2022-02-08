@@ -6,34 +6,24 @@
 
 class main_window;
 class help_window;
-class options_window;
-class variables_window;
 
 class gcalc_app: public Gtk::Application {
 public:
     static auto create() -> Glib::RefPtr<gcalc_app>;
  
     auto help(Gtk::Window* invoker, int topic_idx, bool force_topic) -> void;
-    auto options() -> void;
-    auto variables() -> void;
-
-    auto main_win() -> main_window* {return main_win_.get();}
-    auto help_win() -> help_window* {return help_win_.get();}
-    auto options_win() -> options_window* {return options_win_.get();}
-    auto variables_win() -> variables_window* {return variables_win_.get();}
+    auto help_invoker() const -> Gtk::Window* {return help_invoker_;}
+    auto close_help() -> void;
 
 private:
-    std::unique_ptr<main_window> main_win_;
-    std::unique_ptr<help_window> help_win_;
-    std::unique_ptr<options_window> options_win_;
-    std::unique_ptr<variables_window> variables_win_;
+    std::unique_ptr<main_window> main_win;
+    std::unique_ptr<help_window> help_win;
 
-    bool main_win_invoked_help = false;
-    bool option_win_invoked_help = false;
+    Gtk::Window* help_invoker_ = 0;
 
     gcalc_app();
     auto on_activate() -> void;
-    auto on_window_unmask(Gtk::Window* win) -> void;
+    auto on_close_request(Gtk::Window* win) -> bool;
 };
 
 #endif // GCALC_APP_HPP

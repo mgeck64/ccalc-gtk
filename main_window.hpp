@@ -4,6 +4,8 @@
 #include "gcalc_app.hpp"
 
 #include "ccalc/calc_parser.hpp"
+//#include "variables_window.hpp"
+//#include "options_window.hpp"
 
 #include <gtkmm/application.h>
 #include <gtkmm/window.h>
@@ -15,6 +17,9 @@
 #include <gtkmm/comboboxtext.h>
 
 #include <vector>
+
+class variables_window;
+class options_window;
 
 class main_window : public Gtk::Window {
 public:
@@ -64,6 +69,11 @@ private:
     history_list history;
     history_list::size_type history_idx = 0;
     static constexpr history_list::size_type max_history_size = 32;
+
+    std::unique_ptr<variables_window> variables_win;
+    std::unique_ptr<options_window> options_win;
+
+    auto on_close_request(Gtk::Window* win) -> bool;
 };
 
 #endif // MAIN_WINDOW_HPP

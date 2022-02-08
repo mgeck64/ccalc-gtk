@@ -267,26 +267,37 @@ auto main_window::on_function_action(const char* label) -> void {
 }
 
 auto main_window::on_options_btn_clicked() -> void {
-    app.options(); 
-    expr_entry.grab_focus_without_selecting();
+    if (options_win)
+        options_win->present();
+    else {
+        options_win = std::make_unique<options_window>(app, *this);
+        options_win->signal_close_request().connect(sigc::bind(sigc::mem_fun(*this, &main_window::on_close_request), options_win.get()), false);
+        options_win->show();
+    }
 }
 
 auto main_window::on_variables_btn_clicked() -> void {
-    auto p_win = app.variables_win();
-    app.variables();
-    if (!p_win) // window was created anew; else presenting existing window
-        app.variables_win()->set(parser.variables_begin(), parser.variables_end(), out_options);
-    expr_entry.grab_focus_without_selecting();
+    if (variables_win)
+        variables_win->present();
+    else {
+        variables_win = std::make_unique<variables_window>();
+        variables_win->signal_close_request().connect(sigc::bind(sigc::mem_fun(*this, &main_window::on_close_request), variables_win.get()), false);
+
+        variables_win->show(); // show needs to be called before set otherwise
+        // content will inexplicably be selected and cursor will be visible. see
+        // also variables_window::set. sigh!
+
+        variables_win->set(parser.variables_begin(), parser.variables_end(), out_options);
+    }
 }
 
 auto main_window::on_help_btn_clicked() -> void {
     app.help(this, help_window::quick_start_idx, false);
-    expr_entry.grab_focus_without_selecting();
 }
 
 auto main_window::on_variables_changed() -> void {
-    if (app.variables_win())
-        app.variables_win()->set(parser.variables_begin(), parser.variables_end(), out_options);
+    if (variables_win)
+        variables_win->set(parser.variables_begin(), parser.variables_end(), out_options);
 }
 
 auto main_window::evaluate() -> void {
@@ -326,8 +337,8 @@ auto main_window::evaluate() -> void {
     }
     show_input_info();
     update_if_options_changed(out_options_);
-    if (app.options_win())
-        app.options_win()->update_from(options);
+    if (options_win)
+        options_win->update_from(options);
 }
 
 auto main_window::options(const parser_options& parse_options, const output_options& out_options) -> void {
@@ -347,4 +358,17 @@ auto main_window::update_if_options_changed(const output_options& new_options) -
         }
         show_output_info();
     }
+}
+
+auto main_window::on_close_request(Gtk::Window* win) -> bool {
+    assert(win);
+    if (win == variables_win.get()) {
+        variables_win.reset();
+        return true;
+    }
+    if (win == options_win.get()) {
+        options_win.reset();
+        return true;
+    }
+    return false;
 }

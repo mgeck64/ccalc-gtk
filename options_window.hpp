@@ -1,8 +1,6 @@
 #ifndef OPTIONS_WINDOW_HPP
 #define OPTIONS_WINDOW_HPP
 
-#include "main_window.hpp"
-
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/messagedialog.h>
 #include <gtkmm/comboboxtext.h>
@@ -10,13 +8,19 @@
 #include <gtkmm/checkbutton.h>
 #include <gtkmm/entry.h>
 
+class main_window;
+class gcalc_app;
+struct calc_args;
+
 class options_window : public Gtk::Window {
 public:
-    options_window(gcalc_app& app);
+    options_window(gcalc_app& app, main_window& main_win);
+    ~options_window();
     auto update_from(const calc_args& options, bool force = false) -> void;
 
 private:
     gcalc_app& app;
+    main_window& main_win;
     Gtk::Box win_vbox;
     Gtk::Box content_vbox;
     Gtk::Label title;

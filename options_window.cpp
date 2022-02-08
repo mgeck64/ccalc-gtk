@@ -5,8 +5,9 @@
 
 #include <cassert>
 
-options_window::options_window(gcalc_app& app_) :
+options_window::options_window(gcalc_app& app_, main_window& main_win_) :
     app(app_),
+    main_win(main_win_),
     win_vbox(Gtk::Orientation::VERTICAL),
     content_vbox(Gtk::Orientation::VERTICAL),
     options_hbox(Gtk::Orientation::HORIZONTAL),
@@ -147,20 +148,22 @@ options_window::options_window(gcalc_app& app_) :
     error_msg.set_hide_on_close(true);
     error_msg.signal_response().connect(sigc::hide(sigc::mem_fun(error_msg, &Gtk::Widget::hide)));
 
-    assert(app.main_win());
-    if (auto main_win = app.main_win()) {
-        calc_args options;
-        auto [parse_options, out_options] = main_win->options();
-        options.default_number_type_code = parse_options.default_number_type_code;
-        options.default_number_radix = parse_options.default_number_radix;
-        options.output_radix = out_options.output_radix;
-        options.output_fp_normalized = out_options.output_fp_normalized;
-        options.precision = out_options.precision;
-        options.int_word_size = parse_options.int_word_size;
-        update_from(options, /*force*/ true);
-    }
+    calc_args options;
+    auto [parse_options, out_options] = main_win.options();
+    options.default_number_type_code = parse_options.default_number_type_code;
+    options.default_number_radix = parse_options.default_number_radix;
+    options.output_radix = out_options.output_radix;
+    options.output_fp_normalized = out_options.output_fp_normalized;
+    options.precision = out_options.precision;
+    options.int_word_size = parse_options.int_word_size;
+    update_from(options, /*force*/ true);
 
     show_option(0);
+}
+
+options_window::~options_window() {
+    if (this == app.help_invoker())
+        app.close_help();
 }
 
 auto options_window::update_from(const calc_args& options, bool force) -> void {
@@ -327,7 +330,7 @@ auto options_window::on_help_clicked() -> void {
 }
 
 auto options_window::on_cancel_clicked() -> void {
-    hide();
+    close();
 }
 
 auto options_window::on_defaults_clicked() -> void {
@@ -335,14 +338,7 @@ auto options_window::on_defaults_clicked() -> void {
 }
 
 auto options_window::on_accept_clicked() -> void {
-    auto main_win = app.main_win();
-    assert(main_win);
-    if (!main_win) {
-        hide();
-        return;
-    }
-
-    auto [parse_options, out_options] = main_win->options();
+    auto [parse_options, out_options] = main_win.options();
 
     if (option_0bi.get_active()) {
         parse_options.default_number_radix = calc_val::base2;
@@ -424,8 +420,8 @@ auto options_window::on_accept_clicked() -> void {
     else if (option_w128.get_active())
         parse_options.int_word_size = calc_val::int_bits_128;
 
-    main_win->options(parse_options, out_options);
-    hide();
+    main_win.options(parse_options, out_options);
+    close();
 }
 
 auto options_window::on_prev_option_clicked() -> void {

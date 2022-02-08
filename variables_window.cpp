@@ -34,7 +34,7 @@ variables_window::variables_window() :
 void variables_window::set(calc_parser::variables_itr begin, calc_parser::variables_itr end, const output_options& out_options) {
     variables.set_selectable(true); // this should be done in ctor but when it
     // is done there the cursor inexplicibly shows; doing this here won't cause
-    // cursor to show. sigh!
+    // cursor to show. see also main_window::on_variables_btn_clicked. sigh!
 
     if (begin == end) {
         variables.set_label("There are no variables defined.");
