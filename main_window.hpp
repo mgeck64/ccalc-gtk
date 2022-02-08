@@ -23,9 +23,8 @@ public:
     std::tuple<parser_options, output_options> options() const
     {return std::make_tuple(parser.options(), out_options);}
 
-    auto options(const parser_options& parse_options, const output_options& out_options_) -> void
-    {parser.options(parse_options); out_options = out_options_;}
-
+    auto options(const parser_options& parse_options, const output_options& out_options_) -> void;
+ 
 private:
     gcalc_app& app;
     Gtk::Box win_vbox;
@@ -42,7 +41,8 @@ private:
     Gtk::MenuButton functions_b_btn;
     Gtk::MenuButton more_btn;
 
-    auto show_in_out_info() -> void;
+    auto show_input_info() -> void;
+    auto show_output_info() -> void;
     auto append_history(const Glib::ustring& expr_str) -> void;
     auto recall_history(bool direction_up) -> void;
     auto on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType) -> bool;
@@ -56,8 +56,9 @@ private:
     calc_args args;
     output_options out_options;
     calc_parser parser;
-    bool last_result_parse_error = false;
+    enum last_result_kinds {none_kind, value_kind, parse_error_kind} last_result_kind = none_kind;
     auto evaluate() -> void;
+    auto update_if_options_changed(const output_options& new_options) -> void;
 
     using history_list = std::vector<Glib::ustring>;
     history_list history;

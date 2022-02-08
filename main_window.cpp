@@ -140,10 +140,11 @@ main_window::main_window(gcalc_app& app_) :
         more_menu->append("Help", "more.help");
     }
 
-    show_in_out_info();
+    show_input_info();
+    show_output_info();
 }
 
-auto main_window::show_in_out_info() -> void {
+auto main_window::show_input_info() -> void {
     auto parse_options = parser.options();
 
     Glib::ustring buf;
@@ -162,6 +163,11 @@ auto main_window::show_in_out_info() -> void {
         case calc_val::base16: buf += "hex"; break;
     }
     in_info_label.set_text(buf);
+}
+
+auto main_window::show_output_info() -> void {
+    Glib::ustring buf;
+    buf.reserve(128);
 
     buf = "Output: ";
     switch (out_options.output_radix) {
@@ -212,7 +218,7 @@ auto main_window::recall_history(bool direction_up) -> void {
     } else
         expr_entry.set_text(Glib::ustring());
     result_label.set_text(Glib::ustring());
-    last_result_parse_error = false;
+    last_result_kind = none_kind;
 }
 
 auto main_window::on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType) -> bool {
@@ -266,14 +272,21 @@ auto main_window::on_options_btn_clicked() -> void {
 }
 
 auto main_window::on_variables_btn_clicked() -> void {
+    auto p_win = app.variables_win();
     app.variables();
-    app.variables_win()->set(parser.variables_begin(), parser.variables_end(), out_options);
+    if (!p_win) // window was created anew; else presenting existing window
+        app.variables_win()->set(parser.variables_begin(), parser.variables_end(), out_options);
     expr_entry.grab_focus_without_selecting();
 }
 
 auto main_window::on_help_btn_clicked() -> void {
     app.help(this, help_window::quick_start_idx, false);
     expr_entry.grab_focus_without_selecting();
+}
+
+auto main_window::on_variables_changed() -> void {
+    if (app.variables_win())
+        app.variables_win()->set(parser.variables_begin(), parser.variables_end(), out_options);
 }
 
 auto main_window::evaluate() -> void {
@@ -285,37 +298,53 @@ auto main_window::evaluate() -> void {
     }
 
     calc_args options;
+    auto out_options_ = out_options;
     try {
         auto result = parser.evaluate(
             std::string_view(expr_str.data(), expr_str.size()),
             std::bind(&main_window::on_help_btn_clicked, this),
-            out_options,
+            out_options_,
             std::bind(&main_window::on_variables_changed, this),
             &options);
         std::ostringstream out;
-        out << calc_outputter(out_options)(result);
+        out << calc_outputter(out_options_)(result);
         result_label.set_text(out.str());
-        last_result_parse_error = false;
+        last_result_kind = value_kind;
         expr_entry.set_text(Glib::ustring());
         append_history(expr_str);
     } catch (const calc_parse_error& e) {
         expr_entry.select_region(e.token().view_offset, e.token().view_offset + e.token().view.size());
         result_label.set_text(e.error_str());
-        last_result_parse_error = true;
+        last_result_kind = parse_error_kind;
     } catch (const calc_parser::void_expression) { // this is not an error
         expr_entry.set_text(Glib::ustring());
-        if (last_result_parse_error) {
+        if (last_result_kind == parse_error_kind) {
             result_label.set_text(Glib::ustring());
-            last_result_parse_error = false;
+            last_result_kind = none_kind;
         }
         append_history(expr_str);
     }
-    show_in_out_info();
+    show_input_info();
+    update_if_options_changed(out_options_);
     if (app.options_win())
         app.options_win()->update_from(options);
 }
 
-auto main_window::on_variables_changed() -> void {
-    if (app.variables_win())
-        app.variables_win()->set(parser.variables_begin(), parser.variables_end(), out_options);
+auto main_window::options(const parser_options& parse_options, const output_options& out_options) -> void {
+    parser.options(parse_options);
+    show_input_info();
+    update_if_options_changed(out_options);
+}
+
+auto main_window::update_if_options_changed(const output_options& new_options) -> void {
+    if (out_options != new_options) {
+        out_options = new_options;
+        on_variables_changed(); // output format changed; redisplay
+        if (last_result_kind == value_kind) {
+            std::ostringstream out;
+            out << calc_outputter(out_options)(parser.last_val());
+            result_label.set_text(out.str());
+        }
+        show_output_info();
+    }
 }

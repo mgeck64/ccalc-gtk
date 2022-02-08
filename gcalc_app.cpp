@@ -27,6 +27,8 @@ auto gcalc_app::on_window_unmask(Gtk::Window* win) -> void {
     if (win == main_win_.get()) {
         if (options_win_)
             options_win_->hide();
+        if (variables_win_)
+            variables_win_->hide();
         remove_window(*win);
         main_win_.release();
         main_win_invoked_help = false;

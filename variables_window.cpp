@@ -1,12 +1,15 @@
 #include "variables_window.hpp"
 #include "gcalc_basics.hpp"
 
+#include <gtkmm/scrollbar.h>
+
 #include "ccalc/calc_outputter.hpp"
 
 variables_window::variables_window() :
     content_vbox(Gtk::Orientation::VERTICAL)
-{
-    set_default_size(450, 400);
+ {
+    set_default_size(200, 300);
+
     set_child(content_vbox);
     content_vbox.set_margin(default_margin);
 
@@ -19,9 +22,12 @@ variables_window::variables_window() :
     variables_scroller.set_margin(default_margin);
     variables_scroller.set_child(variables);
 
-    variables.set_expand(true);
+    variables_scroller.set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
+    // let window expand horizontially for wide content
+
     variables.set_halign(Gtk::Align::START);
     variables.set_valign(Gtk::Align::START);
+    variables.set_expand(true);
     variables.set_wrap(true);
 }
 
