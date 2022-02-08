@@ -1,11 +1,7 @@
 #ifndef MAIN_WINDOW_HPP
 #define MAIN_WINDOW_HPP
 
-#include "gcalc_app.hpp"
-
 #include "ccalc/calc_parser.hpp"
-//#include "variables_window.hpp"
-//#include "options_window.hpp"
 
 #include <gtkmm/application.h>
 #include <gtkmm/window.h>
@@ -18,6 +14,7 @@
 
 #include <vector>
 
+class gcalc_app;
 class variables_window;
 class options_window;
 

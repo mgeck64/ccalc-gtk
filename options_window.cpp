@@ -1,5 +1,6 @@
 #include "options_window.hpp"
 #include "gcalc_basics.hpp"
+#include "gcalc_app.hpp"
 #include "main_window.hpp"
 #include "help_window.hpp"
 

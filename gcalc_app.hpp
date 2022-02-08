@@ -1,10 +1,11 @@
 #ifndef GCALC_APP_HPP
 #define GCALC_APP_HPP
 
+#include "main_window.hpp"
+
 #include <gtkmm/application.h>
 #include <gtkmm/window.h>
 
-class main_window;
 class help_window;
 
 class gcalc_app: public Gtk::Application {
@@ -16,14 +17,14 @@ public:
     auto close_help() -> void;
 
 private:
-    std::unique_ptr<main_window> main_win;
+    main_window main_win;
     std::unique_ptr<help_window> help_win;
 
     Gtk::Window* help_invoker_ = 0;
 
     gcalc_app();
     auto on_activate() -> void;
-    auto on_close_request(Gtk::Window* win) -> bool;
+    auto on_help_close_request() -> bool;
 };
 
 #endif // GCALC_APP_HPP
