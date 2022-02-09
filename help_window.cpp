@@ -360,7 +360,7 @@ integer type, binary base option.\n\
 Specifies the default representation type and numeric base to apply to numbers \
 being input when either or both properties cannot be determined from the input; \
 e.g., if an inputtted number has neither a prefix nor a decimal point nor an \
-exponent then both defaults will apply to it, othwewise if it has a decimal \
+exponent then both defaults will apply to it, otherwise if it has a decimal \
 point or an exponent, but no prefix, then the representation type will be \
 complex type and the default numeric base will apply to it, otherwise if it has \
 a prefix then neither default will apply to it.\n\
