@@ -21,6 +21,7 @@ main_window::main_window(gcalc_app& app_) :
     in_out_info_hbox(Gtk::Orientation::HORIZONTAL),
     menus_hbox(Gtk::Orientation::HORIZONTAL),
     expr_btn("="),
+    options_btn("_Options"),
     out_options(args),
     parser(args.default_number_type_code, args.default_number_radix, args.int_word_size)
  {
@@ -74,11 +75,12 @@ main_window::main_window(gcalc_app& app_) :
         };
 
         menus_hbox.append(functions_a_btn);
-        functions_a_btn.set_label("Funcs");
+        functions_a_btn.set_label("_Funcs");
         functions_a_btn.set_tooltip_text("General Functons");
         functions_a_btn.set_margin(0);
         functions_a_btn.set_hexpand(true);
-
+        functions_a_btn.set_use_underline(true);
+    
         auto functions_a_menu = Gio::Menu::create();
         functions_a_btn.set_menu_model(functions_a_menu);
 
@@ -96,10 +98,11 @@ main_window::main_window(gcalc_app& app_) :
         add_action(*functions_a_menu, "proj() - Projection onto the Riemann sphere", "proj", "functions.proj");
 
         menus_hbox.append(functions_b_btn);
-        functions_b_btn.set_label("Trig Funcs");
+        functions_b_btn.set_label("_Trig");
         functions_b_btn.set_margin(0);
         functions_b_btn.set_tooltip_text("Trigonometric Functons");
         functions_b_btn.set_hexpand(true);
+        functions_b_btn.set_use_underline(true);
 
         auto functions_b_menu = Gio::Menu::create();
         functions_b_btn.set_menu_model(functions_b_menu);
@@ -118,6 +121,12 @@ main_window::main_window(gcalc_app& app_) :
         add_action(*functions_b_menu, "atanh() - Inverse hyperbolic tan", "atanh", "functions.atanh");
     }
 
+    menus_hbox.append(options_btn);
+    options_btn.set_margin(0);
+    options_btn.set_hexpand(true);
+    options_btn.set_use_underline(true);
+    options_btn.signal_clicked().connect(sigc::mem_fun(*this, &main_window::on_options_btn_clicked));
+
     {
         auto more_action_group = Gio::SimpleActionGroup::create();
         insert_action_group("more", more_action_group);
@@ -125,13 +134,11 @@ main_window::main_window(gcalc_app& app_) :
         menus_hbox.append(more_btn);
         more_btn.set_icon_name("open-menu-symbolic");
         more_btn.set_margin(0);
+        more_btn.set_tooltip_text("More");
         more_btn.set_hexpand(false);
 
         auto more_menu = Gio::Menu::create();
         more_btn.set_menu_model(more_menu);
-
-        more_action_group->add_action("options", sigc::mem_fun(*this, &main_window::on_options_btn_clicked));
-        more_menu->append("Options", "more.options");
 
         more_action_group->add_action("variables", sigc::mem_fun(*this, &main_window::on_variables_btn_clicked));
         more_menu->append("Variables", "more.variables");

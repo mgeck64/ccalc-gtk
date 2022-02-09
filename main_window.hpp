@@ -41,6 +41,7 @@ private:
     Gtk::Label out_info_label;
     Gtk::MenuButton functions_a_btn;
     Gtk::MenuButton functions_b_btn;
+    Gtk::Button options_btn;
     Gtk::MenuButton more_btn;
 
     auto show_input_info() -> void;
