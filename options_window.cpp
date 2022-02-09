@@ -16,10 +16,10 @@ options_window::options_window(gcalc_app& app_, main_window& main_win_) :
     next_option("\u25bc"),
     option_vbox(Gtk::Orientation::VERTICAL),
     buttons_hbox(Gtk::Orientation::HORIZONTAL),
-    help("Help"),
-    defaults("Defaults"),
-    accept("Accept"),
-    cancel("Cancel"),
+    help("_Help"),
+    defaults("_Defaults"),
+    accept("_Accept"),
+    cancel("_Cancel"),
     option_0bi("Signed integer type, binary base (@0b or @0bi)"),
     option_0oi("Signed integer type, octal base (@0o or @0oi)"),
     option_0di("Signed integer type, decimal base (@0d or @0di)"),
@@ -95,25 +95,28 @@ options_window::options_window(gcalc_app& app_, main_window& main_win_) :
     buttons_hbox.append(help);
     help.set_margin(0);
     help.set_expand(true);
+    help.set_use_underline(true);
     help.signal_clicked().connect(sigc::mem_fun(*this, &options_window::on_help_clicked));
  
     buttons_hbox.append(defaults);
     defaults.set_margin(0);
     defaults.set_expand(true);
+    defaults.set_use_underline(true);
     defaults.signal_clicked().connect(sigc::mem_fun(*this, &options_window::on_defaults_clicked));
 
     buttons_hbox.append(cancel);
     cancel.set_margin(0);
     cancel.set_expand(true);
+    cancel.set_use_underline(true);
     cancel.signal_clicked().connect(sigc::mem_fun(*this, &options_window::on_cancel_clicked));
  
     buttons_hbox.append(accept);
     accept.set_margin(0);
     accept.set_expand(true);
+    accept.set_use_underline(true);
     accept.signal_clicked().connect(sigc::mem_fun(*this, &options_window::on_accept_clicked));
 
     constexpr auto dm = default_margin;
-    // set only left and rignt margins so these pack vertically:
     option_0bi.set_margin_start(dm); option_0bi.set_margin_end(dm);
     option_0oi.set_margin_start(dm); option_0oi.set_margin_end(dm); option_0oi.set_group(option_0bi);
     option_0di.set_margin_start(dm); option_0di.set_margin_end(dm); option_0di.set_group(option_0bi);
