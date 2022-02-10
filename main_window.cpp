@@ -22,8 +22,7 @@ main_window::main_window(gcalc_app& app_) :
     menus_hbox(Gtk::Orientation::HORIZONTAL),
     expr_btn("="),
     options_btn("_Options"),
-    out_options(args),
-    parser(args.default_number_type_code, args.default_number_radix, args.int_word_size)
+    settings(*this)
  {
     set_child(win_vbox);
 
@@ -147,12 +146,15 @@ main_window::main_window(gcalc_app& app_) :
         more_menu->append("Help", "more.help");
     }
 
+    settings.load(parse_options, out_options);
+    parser.options(parse_options);
+
     show_input_info();
     show_output_info();
 }
 
 auto main_window::show_input_info() -> void {
-    auto parse_options = parser.options();
+    assert(parse_options == parser.options());
 
     Glib::ustring buf;
     buf.reserve(128);
@@ -316,16 +318,16 @@ auto main_window::evaluate() -> void {
     }
 
     calc_args options;
-    auto out_options_ = out_options;
+    auto new_out_options = out_options;
     try {
         auto result = parser.evaluate(
             std::string_view(expr_str.data(), expr_str.size()),
             std::bind(&main_window::on_help_btn_clicked, this),
-            out_options_,
+            new_out_options,
             std::bind(&main_window::on_variables_changed, this),
             &options);
         std::ostringstream out;
-        out << calc_outputter(out_options_)(result);
+        out << calc_outputter(new_out_options)(result);
         result_label.set_text(out.str());
         last_result_kind = value_kind;
         expr_entry.set_text(Glib::ustring());
@@ -342,29 +344,37 @@ auto main_window::evaluate() -> void {
         }
         append_history(expr_str);
     }
-    show_input_info();
-    update_if_options_changed(out_options_);
+    update_if_options_changed(new_out_options);
     if (options_win)
         options_win->update_from(options);
 }
 
 auto main_window::options(const parser_options& parse_options, const output_options& out_options) -> void {
     parser.options(parse_options);
-    show_input_info();
     update_if_options_changed(out_options);
 }
 
-auto main_window::update_if_options_changed(const output_options& new_options) -> void {
-    if (out_options != new_options) {
-        out_options = new_options;
-        on_variables_changed(); // output format changed; redisplay
-        if (last_result_kind == value_kind) {
+auto main_window::update_if_options_changed(const output_options& new_out_options) -> void {
+    bool changed = false;
+    auto new_parse_options = parser.options();
+    if (parse_options != new_parse_options) {
+        changed = true;
+        parse_options = new_parse_options;
+        show_input_info();
+    }
+    if (out_options != new_out_options) {
+        changed = true;
+        out_options = new_out_options;
+        if (last_result_kind == value_kind) { // output format changed; redisplay
             std::ostringstream out;
             out << calc_outputter(out_options)(parser.last_val());
             result_label.set_text(out.str());
         }
         show_output_info();
+        on_variables_changed(); // output format changed; redisplay
     }
+    if (changed)
+        settings.save(new_parse_options, new_out_options);
 }
 
 auto main_window::on_close_request(Gtk::Window* win) -> bool {

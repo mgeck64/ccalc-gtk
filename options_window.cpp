@@ -408,7 +408,6 @@ auto options_window::on_accept_clicked() -> void {
     } catch (const std::logic_error&) {
         show_option(precision_idx);
         error_msg.set_message("Floating point precision value is invalid");
-        error_msg.set_modal(true);
         error_msg.show();
         return;
     }

@@ -2,6 +2,7 @@
 #define MAIN_WINDOW_HPP
 
 #include "ccalc/calc_parser.hpp"
+#include "calc_settings.hpp"
 
 #include <gtkmm/application.h>
 #include <gtkmm/window.h>
@@ -44,6 +45,8 @@ private:
     Gtk::Button options_btn;
     Gtk::MenuButton more_btn;
 
+    calc_settings settings;
+
     auto show_input_info() -> void;
     auto show_output_info() -> void;
     auto append_history(const Glib::ustring& expr_str) -> void;
@@ -56,12 +59,12 @@ private:
     auto on_help_btn_clicked() -> void;
     auto on_variables_changed() -> void;
 
-    calc_args args;
+    parser_options parse_options;
     output_options out_options;
     calc_parser parser;
     enum last_result_kinds {none_kind, value_kind, parse_error_kind} last_result_kind = none_kind;
     auto evaluate() -> void;
-    auto update_if_options_changed(const output_options& new_options) -> void;
+    auto update_if_options_changed(const output_options& new_out_options) -> void;
 
     using history_list = std::vector<Glib::ustring>;
     history_list history;
