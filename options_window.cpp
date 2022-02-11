@@ -77,7 +77,6 @@ options_window::options_window(gcalc_app& app_, main_window& main_win_) :
     prev_option.set_margin_end(0);
     prev_option.signal_clicked().connect(sigc::mem_fun(*this, &options_window::on_prev_option_clicked));
 
-
     options_hbox.append(next_option);
     next_option.set_margin(default_margin);
     next_option.set_margin_start(0);
@@ -86,7 +85,6 @@ options_window::options_window(gcalc_app& app_, main_window& main_win_) :
     content_vbox.append(option_scroller);
 
     option_scroller.set_child(option_vbox);
-
     option_vbox.set_expand(true);
 
     win_vbox.append(buttons_hbox);
