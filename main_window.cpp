@@ -317,15 +317,13 @@ auto main_window::evaluate() -> void {
         return;
     }
 
-    calc_args options;
     auto new_out_options = out_options;
     try {
         auto result = parser.evaluate(
             std::string_view(expr_str.data(), expr_str.size()),
             std::bind(&main_window::on_help_btn_clicked, this),
             new_out_options,
-            std::bind(&main_window::on_variables_changed, this),
-            &options);
+            std::bind(&main_window::on_variables_changed, this));
         std::ostringstream out;
         out << calc_outputter(new_out_options)(result);
         result_label.set_text(out.str());
@@ -345,8 +343,6 @@ auto main_window::evaluate() -> void {
         append_history(expr_str);
     }
     update_if_options_changed(new_out_options);
-    if (options_win)
-        options_win->update_from(options);
 }
 
 auto main_window::options(const parser_options& parse_options, const output_options& out_options) -> void {
@@ -355,15 +351,19 @@ auto main_window::options(const parser_options& parse_options, const output_opti
 }
 
 auto main_window::update_if_options_changed(const output_options& new_out_options) -> void {
-    bool changed = false;
     auto new_parse_options = parser.options();
+
+    if (options_win)
+        options_win->update_from(parse_options, new_parse_options, out_options, new_out_options);
+
+    bool options_changed = false;
     if (parse_options != new_parse_options) {
-        changed = true;
+        options_changed = true;
         parse_options = new_parse_options;
         show_input_info();
     }
     if (out_options != new_out_options) {
-        changed = true;
+        options_changed = true;
         out_options = new_out_options;
         if (last_result_kind == value_kind) { // output format changed; redisplay
             std::ostringstream out;
@@ -373,7 +373,7 @@ auto main_window::update_if_options_changed(const output_options& new_out_option
         show_output_info();
         on_variables_changed(); // output format changed; redisplay
     }
-    if (changed)
+    if (options_changed)
         settings.save(new_parse_options, new_out_options);
 }
 

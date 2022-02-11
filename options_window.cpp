@@ -18,8 +18,8 @@ options_window::options_window(gcalc_app& app_, main_window& main_win_) :
     buttons_hbox(Gtk::Orientation::HORIZONTAL),
     help("_Help"),
     defaults("_Defaults"),
-    accept("_Accept"),
     cancel("_Cancel"),
+    accept("_Accept"),
     option_0bi("Signed integer type, binary base (@0b or @0bi)"),
     option_0oi("Signed integer type, octal base (@0o or @0oi)"),
     option_0di("Signed integer type, decimal base (@0d or @0di)"),
@@ -152,15 +152,8 @@ options_window::options_window(gcalc_app& app_, main_window& main_win_) :
     error_msg.set_hide_on_close(true);
     error_msg.signal_response().connect(sigc::hide(sigc::mem_fun(error_msg, &Gtk::Widget::hide)));
 
-    calc_args options;
     auto [parse_options, out_options] = main_win.options();
-    options.default_number_type_code = parse_options.default_number_type_code;
-    options.default_number_radix = parse_options.default_number_radix;
-    options.output_radix = out_options.output_radix;
-    options.output_fp_normalized = out_options.output_fp_normalized;
-    options.precision = out_options.precision;
-    options.int_word_size = parse_options.int_word_size;
-    update_from(options, /*force*/ true);
+    update_from(parse_options, parse_options, out_options, out_options, /*force*/ true);
 
     show_option(0);
 }
@@ -170,17 +163,24 @@ options_window::~options_window() {
         app.close_help();
 }
 
-auto options_window::update_from(const calc_args& options, bool force) -> void {
-    // force = true: update all option widgets
-    // force = false: update option widgets only for options in args that have
-    // been set (its corresponding counter will be non-zero; see
-    // calc_parser::evaluate); thus any other pending changes by the user will
-    // be preserved
-
-    if (force || options.n_default_options)
-        switch (options.default_number_type_code) {
+auto options_window::update_from(
+    const parser_options& parse_options,
+    const parser_options& new_parse_options,
+    const output_options& out_options,
+    const output_options& new_out_options,
+    bool force
+    ) -> void
+// force = true: update all option widgets
+// force = false: update option widgets only for options that have changed, thus
+// any other pending changes by the user will be preserved
+{
+    if (force 
+        || parse_options.default_number_type_code != new_parse_options.default_number_type_code
+        || parse_options.default_number_radix != new_parse_options.default_number_radix
+        )
+        switch (new_parse_options.default_number_type_code) {
             case calc_val::int_code:
-                switch (options.default_number_radix) {
+                switch (new_parse_options.default_number_radix) {
                     case calc_val::base2:  option_0bi.set_active(true); break;
                     case calc_val::base8:  option_0oi.set_active(true); break;
                     case calc_val::base10: option_0di.set_active(true); break;
@@ -188,7 +188,7 @@ auto options_window::update_from(const calc_args& options, bool force) -> void {
                 }
                 break;
             case calc_val::uint_code:
-                switch (options.default_number_radix) {
+                switch (new_parse_options.default_number_radix) {
                     case calc_val::base2:  option_0bu.set_active(true); break;
                     case calc_val::base8:  option_0ou.set_active(true); break;
                     case calc_val::base10: option_0du.set_active(true); break;
@@ -196,7 +196,7 @@ auto options_window::update_from(const calc_args& options, bool force) -> void {
                 }
                 break;
             case calc_val::complex_code:
-                switch (options.default_number_radix) {
+                switch (new_parse_options.default_number_radix) {
                     case calc_val::base2:  option_0bn.set_active(true); break;
                     case calc_val::base8:  option_0on.set_active(true); break;
                     case calc_val::base10: option_0dn.set_active(true); break;
@@ -205,25 +205,25 @@ auto options_window::update_from(const calc_args& options, bool force) -> void {
                 break;
         }
 
-    if (force || options.n_output_options)
-        switch (options.output_radix) {
+    if (force || out_options.output_radix != new_out_options.output_radix)
+        switch (new_out_options.output_radix) {
             case calc_val::base2:  option_ob.set_active(true); break;
             case calc_val::base8:  option_oo.set_active(true); break;
             case calc_val::base10: option_od.set_active(true); break;
             case calc_val::base16: option_ox.set_active(true); break;
         }
 
-    if (force || options.n_output_fp_normalized_options)
-        switch (options.output_fp_normalized) {
+    if (force || out_options.output_fp_normalized != new_out_options.output_fp_normalized)
+        switch (new_out_options.output_fp_normalized) {
             case true:  option_pn.set_active(true); break;
             case false: option_pu.set_active(true); break;
         }
 
-    if (force || options.n_precision_options)
-        option_pr_entry.set_text(std::to_string(options.precision));
+    if (force || out_options.precision != new_out_options.precision)
+        option_pr_entry.set_text(std::to_string(new_out_options.precision));
 
-    if (force || options.n_int_word_size_options)
-        switch (options.int_word_size) {
+    if (force || parse_options.int_word_size != new_parse_options.int_word_size)
+        switch (new_parse_options.int_word_size) {
             case calc_val::int_bits_8:   option_w8.set_active(true); break;
             case calc_val::int_bits_16:  option_w16.set_active(true); break;
             case calc_val::int_bits_32:  option_w32.set_active(true); break;
@@ -338,7 +338,9 @@ auto options_window::on_cancel_clicked() -> void {
 }
 
 auto options_window::on_defaults_clicked() -> void {
-    update_from(calc_args(), /*force*/ true);
+    auto parse_options = parser_options();
+    auto out_options = output_options();
+    update_from(parse_options, parse_options, out_options, out_options, /*force*/ true);
 }
 
 auto options_window::on_accept_clicked() -> void {
@@ -403,7 +405,7 @@ auto options_window::on_accept_clicked() -> void {
         while (idx < text.size() && isspace(text[idx]))
             ++idx;
         if (precision < 0 || !text.is_ascii() || idx != text.size())
-            throw std::invalid_argument("Invalid value");
+            throw std::invalid_argument("");
         out_options.precision = precision;
     } catch (const std::logic_error&) {
         show_option(precision_idx);
