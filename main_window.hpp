@@ -10,6 +10,7 @@
 #include <gtkmm/entry.h>
 #include <gtkmm/button.h>
 #include <gtkmm/menubutton.h>
+#include <gtkmm/frame.h>
 #include <gtkmm/label.h>
 #include <gtkmm/comboboxtext.h>
 
@@ -37,6 +38,7 @@ private:
     Gtk::Box menus_hbox;
     Gtk::Entry expr_entry;
     Gtk::Button expr_btn;
+    Gtk::Frame result_frame;
     Gtk::Label result_label;
     Gtk::Label in_info_label;
     Gtk::Label out_info_label;

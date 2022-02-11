@@ -46,8 +46,9 @@ main_window::main_window(gcalc_app& app_) :
     expr_btn.set_margin(default_margin);
     expr_btn.signal_clicked().connect(sigc::mem_fun(*this, &main_window::on_expr_btn_clicked));
 
-    content_vbox.append(result_label);
-    result_label.set_margin(default_margin);
+    content_vbox.append(result_frame);
+    result_frame.set_child(result_label);
+    result_frame.set_margin(default_margin);
     result_label.set_vexpand(true);
     result_label.set_halign(Gtk::Align::START);
     result_label.set_selectable(true);
