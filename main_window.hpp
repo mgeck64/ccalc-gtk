@@ -13,11 +13,11 @@
 #include <gtkmm/frame.h>
 #include <gtkmm/label.h>
 #include <gtkmm/comboboxtext.h>
+#include <gtkmm/scrolledwindow.h>
 
 #include <vector>
 
 class gcalc_app;
-class variables_window;
 class settings_window;
 
 class main_window : public Gtk::Window {
@@ -39,9 +39,12 @@ private:
     Gtk::Entry expr_entry;
     Gtk::Button expr_btn;
     Gtk::Frame result_frame;
-    Gtk::Label result_label;
-    Gtk::Label in_info_label;
-    Gtk::Label out_info_label;
+    Gtk::Label result_lbl;
+    Gtk::Label in_info_lbl;
+    Gtk::Label out_info_lbl;
+    Gtk::ScrolledWindow variables_scroller;
+    Gtk::Frame variables_frame;
+    Gtk::Label variables_lbl;
     Gtk::MenuButton functions_a_btn;
     Gtk::MenuButton functions_b_btn;
     Gtk::Button settings_btn;
@@ -73,7 +76,6 @@ private:
     history_list::size_type history_idx = 0;
     static constexpr history_list::size_type max_history_size = 32;
 
-    std::unique_ptr<variables_window> variables_win;
     std::unique_ptr<settings_window> settings_win;
 
     auto on_close_request() -> bool;

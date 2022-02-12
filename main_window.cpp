@@ -3,7 +3,6 @@
 #include "gcalc_basics.hpp"
 #include "help_window.hpp"
 #include "settings_window.hpp"
-#include "variables_window.hpp"
 
 #include "ccalc/calc_parse_error.hpp"
 #include "ccalc/calc_outputter.hpp"
@@ -47,21 +46,32 @@ main_window::main_window(gcalc_app& app_) :
     expr_btn.signal_clicked().connect(sigc::mem_fun(*this, &main_window::on_expr_btn_clicked));
 
     content_vbox.append(result_frame);
-    result_frame.set_child(result_label);
+    result_frame.set_child(result_lbl);
     result_frame.set_margin(default_margin);
-    result_label.set_vexpand(true);
-    result_label.set_halign(Gtk::Align::START);
-    result_label.set_selectable(true);
+    result_lbl.set_vexpand(false);
+    result_lbl.set_halign(Gtk::Align::START);
+    result_lbl.set_selectable(true);
  
     content_vbox.append(in_out_info_hbox);
-    in_out_info_hbox.append(in_info_label);
-    in_out_info_hbox.append(out_info_label);
-    in_info_label.set_margin(default_margin);
-    in_info_label.set_hexpand(true);
-    in_info_label.set_halign(Gtk::Align::START);
-    out_info_label.set_margin(default_margin);
-    out_info_label.set_hexpand(true);
-    out_info_label.set_halign(Gtk::Align::END);
+    in_out_info_hbox.append(in_info_lbl);
+    in_out_info_hbox.append(out_info_lbl);
+    in_info_lbl.set_margin(default_margin);
+    in_info_lbl.set_hexpand(true);
+    in_info_lbl.set_halign(Gtk::Align::START);
+    out_info_lbl.set_margin(default_margin);
+    out_info_lbl.set_hexpand(true);
+    out_info_lbl.set_halign(Gtk::Align::END);
+
+    content_vbox.append(variables_scroller);
+    variables_scroller.set_child(variables_frame);
+    variables_scroller.set_size_request(-1, 150);
+    variables_frame.set_child(variables_lbl);
+    variables_frame.set_margin(default_margin);
+    variables_lbl.set_margin(default_margin);
+    variables_lbl.set_expand(true);
+    variables_lbl.set_halign(Gtk::Align::START);
+    variables_lbl.set_valign(Gtk::Align::START);
+    variables_scroller.hide();
 
     win_vbox.append(menus_hbox);
 
@@ -172,7 +182,7 @@ auto main_window::show_input_info() -> void {
         case calc_val::base10: buf += "decimal"; break;
         case calc_val::base16: buf += "hex"; break;
     }
-    in_info_label.set_text(buf);
+    in_info_lbl.set_text(buf);
 }
 
 auto main_window::show_output_info() -> void {
@@ -186,7 +196,7 @@ auto main_window::show_output_info() -> void {
         case calc_val::base10: buf += "decimal"; break;
         case calc_val::base16: buf += "hex"; break;
     }
-    out_info_label.set_text(buf);
+    out_info_lbl.set_text(buf);
 }
 
 auto main_window::append_history(const Glib::ustring& expr_str) -> void {
@@ -227,7 +237,7 @@ auto main_window::recall_history(bool direction_up) -> void {
         expr_entry.set_position(text.size());
     } else
         expr_entry.set_text(Glib::ustring());
-    result_label.set_text(Glib::ustring());
+    result_lbl.set_text(Glib::ustring());
     last_result_kind = none_kind;
 }
 
@@ -286,35 +296,49 @@ auto main_window::on_settings_btn_clicked() -> void {
     }
 }
 
-auto main_window::on_variables_btn_clicked() -> void {
-    if (variables_win)
-        variables_win->present();
-    else {
-        variables_win = std::make_unique<variables_window>();
-        variables_win->signal_close_request().connect(sigc::bind(sigc::mem_fun(*this, &main_window::on_client_close_request), variables_win.get()), false);
-
-        variables_win->show(); // show needs to be called before set otherwise
-        // content will inexplicably be selected and cursor will be visible. see
-        // also variables_window::set. sigh!
-
-        variables_win->set(parser.variables_begin(), parser.variables_end(), out_options);
-    }
-}
-
 auto main_window::on_help_btn_clicked() -> void {
     app.help(this, help_window::quick_start_idx, false);
 }
 
+auto main_window::on_variables_btn_clicked() -> void {
+    if (variables_scroller.is_visible()) {
+        variables_lbl.set_text("");
+        variables_scroller.hide();
+        set_default_size(-1, -1); // reclaim screen space used by variables; doesn't happen automatically
+    } else {
+        variables_scroller.show();
+        on_variables_changed();
+    }
+ }
+
 auto main_window::on_variables_changed() -> void {
-    if (variables_win)
-        variables_win->set(parser.variables_begin(), parser.variables_end(), out_options);
+    if (!variables_scroller.is_visible())
+        return;
+
+    auto begin = parser.variables_begin();
+    auto end = parser.variables_end();
+
+    if (begin == end) {
+        variables_lbl.set_text("There are no variables defined.");
+        return;
+    }
+
+    std::stringstream buf;
+    for (auto itr = begin; itr != end;) {
+        buf << itr->first;
+        buf << " = ";
+        buf << calc_outputter(out_options)(itr->second);
+        if (++itr != end)
+            buf << "\n";
+    }
+    variables_lbl.set_label(buf.str());
 }
 
 auto main_window::evaluate() -> void {
     auto expr_str = expr_entry.get_text();
 
     if (!expr_str.is_ascii()) {
-        result_label.set_text("Only ASCII characters are allowed.");
+        result_lbl.set_text("Only ASCII characters are allowed.");
         return;
     }
 
@@ -327,18 +351,18 @@ auto main_window::evaluate() -> void {
             std::bind(&main_window::on_variables_changed, this));
         std::ostringstream out;
         out << calc_outputter(new_out_options)(result);
-        result_label.set_text(out.str());
+        result_lbl.set_text(out.str());
         last_result_kind = value_kind;
         expr_entry.set_text(Glib::ustring());
         append_history(expr_str);
     } catch (const calc_parse_error& e) {
         expr_entry.select_region(e.token().view_offset, e.token().view_offset + e.token().view.size());
-        result_label.set_text(e.error_str());
+        result_lbl.set_text(e.error_str());
         last_result_kind = parse_error_kind;
     } catch (const calc_parser::void_expression) { // this is not an error
         expr_entry.set_text(Glib::ustring());
         if (last_result_kind == parse_error_kind) {
-            result_label.set_text(Glib::ustring());
+            result_lbl.set_text(Glib::ustring());
             last_result_kind = none_kind;
         }
         append_history(expr_str);
@@ -369,7 +393,7 @@ auto main_window::update_if_options_changed(const output_options& new_out_option
         if (last_result_kind == value_kind) { // output format changed; redisplay
             std::ostringstream out;
             out << calc_outputter(out_options)(parser.last_val());
-            result_label.set_text(out.str());
+            result_lbl.set_text(out.str());
         }
         show_output_info();
         on_variables_changed(); // output format changed; redisplay
@@ -379,17 +403,12 @@ auto main_window::update_if_options_changed(const output_options& new_out_option
 }
 
 auto main_window::on_close_request() -> bool {
-    variables_win.reset();
     settings_win.reset();
     return Gtk::Window::on_close_request();
 }
 
 auto main_window::on_client_close_request(Gtk::Window* win) -> bool {
     assert(win);
-    if (win == variables_win.get()) {
-        variables_win.reset();
-        return true;
-    }
     if (win == settings_win.get()) {
         settings_win.reset();
         return true;
