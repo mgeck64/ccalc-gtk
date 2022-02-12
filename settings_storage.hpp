@@ -1,5 +1,5 @@
-#ifndef CALC_SETTINGS_HPP
-#define CALC_SETTINGS_HPP
+#ifndef SETTINGS_STORAGE_HPP
+#define SETTINGS_STORAGE_HPP
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -8,13 +8,13 @@
 
 #include "ccalc/calc_args.hpp"
 
-class calc_settings {
+class settings_storage {
 private:
     Gtk::MessageDialog error_msg;
     auto show_err_msg(const boost::property_tree::ptree_error& e, const char* msg, const std::string& file_pathname) -> void;
 
 public:
-    calc_settings(Gtk::Window& parent_win);
+    settings_storage(Gtk::Window& parent_win);
     // note: because this can show a modal error dialog, make this a member of
     // parent_win to make sure the dialog will persist (i.e., don't use this as
     // local variable else dialog won't persist after function returns)
@@ -30,4 +30,4 @@ public:
     auto save(const parser_options& parse_options, const output_options& out_options) -> void;
 };
 
-#endif // CALC_SETTINGS_HPP
+#endif // SETTINGS_STORAGE_HPP

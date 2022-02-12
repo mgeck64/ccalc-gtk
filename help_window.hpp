@@ -13,7 +13,7 @@ public:
     enum topic_idxs {quick_start_idx, representation_types_and_numeric_bases_idx,
         input_output_information_area_idx, scientific_notation_idx, prefixes_idx,
         implied_multiplication_idx, functions_idx, bitwise_operators_idx,
-        variables_idx, options_idx, num_topics};
+        variables_idx, settings_window_idx, settings_textual_idx, num_topics};
 
     help_window(int topic_idx);
     auto show_topic(int topic_idx) -> void;
@@ -35,7 +35,8 @@ private:
     Gtk::ScrolledWindow functions_swin;
     Gtk::ScrolledWindow bitwise_operators_swin;
     Gtk::ScrolledWindow variables_swin;
-    Gtk::ScrolledWindow options_swin;
+    Gtk::ScrolledWindow settings_window_swin;
+    Gtk::ScrolledWindow settings_textual_swin;
     Gtk::ScrolledWindow num_topics_swin;
 
     Gtk::Label quick_start_lbl;
@@ -47,7 +48,8 @@ private:
     Gtk::Label functions_lbl;
     Gtk::Label bitwise_operators_lbl;
     Gtk::Label variables_lbl;
-    Gtk::Label options_lbl;
+    Gtk::Label settings_window_lbl;
+    Gtk::Label settings_textual_lbl;
     Gtk::Label num_topics_lbl;
 
     int last_topic_idx = -1;

@@ -2,7 +2,7 @@
 #define MAIN_WINDOW_HPP
 
 #include "ccalc/calc_parser.hpp"
-#include "calc_settings.hpp"
+#include "settings_storage.hpp"
 
 #include <gtkmm/application.h>
 #include <gtkmm/window.h>
@@ -18,7 +18,7 @@
 
 class gcalc_app;
 class variables_window;
-class options_window;
+class settings_window;
 
 class main_window : public Gtk::Window {
 public:
@@ -44,10 +44,10 @@ private:
     Gtk::Label out_info_label;
     Gtk::MenuButton functions_a_btn;
     Gtk::MenuButton functions_b_btn;
-    Gtk::Button options_btn;
+    Gtk::Button settings_btn;
     Gtk::MenuButton more_btn;
 
-    calc_settings settings;
+    settings_storage settings_storager;
 
     auto show_input_info() -> void;
     auto show_output_info() -> void;
@@ -56,7 +56,7 @@ private:
     auto on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType) -> bool;
     auto on_expr_btn_clicked() -> void;
     auto on_function_action(const char* label) -> void;
-    auto on_options_btn_clicked() -> void;
+    auto on_settings_btn_clicked() -> void;
     auto on_variables_btn_clicked() -> void;
     auto on_help_btn_clicked() -> void;
     auto on_variables_changed() -> void;
@@ -74,9 +74,10 @@ private:
     static constexpr history_list::size_type max_history_size = 32;
 
     std::unique_ptr<variables_window> variables_win;
-    std::unique_ptr<options_window> options_win;
+    std::unique_ptr<settings_window> settings_win;
 
-    auto on_close_request(Gtk::Window* win) -> bool;
+    auto on_close_request() -> bool;
+    auto on_client_close_request(Gtk::Window* win) -> bool;
 };
 
 #endif // MAIN_WINDOW_HPP

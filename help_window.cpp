@@ -12,7 +12,8 @@ extern const char implied_multiplication_txt[];
 extern const char functions_txt[];
 extern const char bitwise_operators_txt[];
 extern const char variables_txt[];
-extern const char options_txt[];
+extern const char settings_window_txt[];
+extern const char settings_textual_txt[];
 }
 
 help_window::help_window(int topic_idx) :
@@ -44,7 +45,8 @@ help_window::help_window(int topic_idx) :
     topics.append("Functions");
     topics.append("Bitwise Operators");
     topics.append("Variables");
-    topics.append("Options");
+    topics.append("Settings Window");
+    topics.append("Settings -- Textual Input");
     topics.signal_changed().connect(sigc::mem_fun(*this, &help_window::on_topics_changed));
     top_hbox.append(topics);
 
@@ -82,7 +84,8 @@ help_window::help_window(int topic_idx) :
         setup(functions_swin, functions_lbl, functions_txt);
         setup(bitwise_operators_swin, bitwise_operators_lbl, bitwise_operators_txt);
         setup(variables_swin, variables_lbl, variables_txt);
-        setup(options_swin, options_lbl, options_txt);
+        setup(settings_window_swin, settings_window_lbl, settings_window_txt);
+        setup(settings_textual_swin, settings_textual_lbl, settings_textual_txt);
     }
 
     show_topic(topic_idx);
@@ -132,8 +135,10 @@ auto help_window::show_topic(int topic_idx) -> void {
             bitwise_operators_swin.hide(); break;
         case variables_idx:
             variables_swin.hide(); break;
-        case options_idx:
-            options_swin.hide(); break;
+        case settings_window_idx:
+            settings_window_swin.hide(); break;
+        case settings_textual_idx:
+            settings_textual_swin.hide(); break;
     }
 
     switch (topic_idx) {
@@ -155,8 +160,10 @@ auto help_window::show_topic(int topic_idx) -> void {
             bitwise_operators_swin.show(); break;
         case variables_idx:
             variables_swin.show(); break;
-        case options_idx:
-            options_swin.show(); break;
+        case settings_window_idx:
+            settings_window_swin.show(); break;
+        case settings_textual_idx:
+            settings_textual_swin.show(); break;
     }
     last_topic_idx = topic_idx;
     topics.set_active(topic_idx);
@@ -164,10 +171,10 @@ auto help_window::show_topic(int topic_idx) -> void {
 
 namespace {
 const char quick_start_txt[] = "\
-Type in a mathematical expression in text form into the main input field; press \
-Enter or click the = button to perform the calculation; an example of an \
+Type in a mathematical expression in text form into the expression input field; \
+press Enter or click the = button to perform the calculation; an example of an \
 expression is 2+4*8, which means multiply 4 by 8 and add 2 to the result. You \
-can also type in \"help\" instead to show this help.\n\
+can also enter \"help\" instead to show this help.\n\
 \n\
 <b>Basic arithmetic operators:</b>\n\
 \n\
@@ -191,13 +198,18 @@ e - Euler's number\n\
 i - Imaginary unit\n\
 last - The last result\n\
 \n\
-Example: e^(i*pi)+1";
+Example: e^(i*pi)+1\n\
+\n\
+<b>Entry history:</b>\n\
+\n\
+A history of entered data is kept and may be recalled by using the up and down \
+arrow keys.";
 
 const char representation_types_and_numeric_bases_txt[] = "\
 This calculator can process numbers of complex type, signed integer type and \
 unsigned integer type (these are the supported representation types). By \
 default, it processes numbers of complex type, but this can be changed via the \
-<b>input defaults</b> options.\n\
+Input Defaults settings.\n\
 \n\
 Complex type: Represents a complex number composed of a real and imaginary part, \
 both of which are high precision floating point types (50 significant decimal \
@@ -209,15 +221,18 @@ imaginary part is 0), 2i (imaginary number; real part is 0).\n\
 \n\
 This calculator can input and output numbers in binary, octal, decimal, or \
 hexadecimal numeric base. By default, it inputs and outputs numbers in decimal \
-numeric base, but this can be changed via the <b>input defaults</b> and \
-<b>output base</b> options.";
+numeric base, but this can be changed via the Input Defaults and Output Base \
+settings.\n\
+\n\
+A note about entering hexadecimal numbers: A number that starts with a letter \
+digit, e.g., f0e0, must be entered with a leading zero, e,g,, 0f0e0, otherwise \
+it will be interpreted to be an identifier (variable name).";
 
 const char input_output_information_area_txt[] = "\
 The input/output information area near the bottom of the main window displays \
-the current default representation type and numeric base being applied to \
-numbers being input, and the output numeric base for the results of \
-calculations. These properties can be changed via the <b>input defaults</b> and \
-<b>output base</b> options.\n\
+the current default representation type and numeric base being used to interpret \
+numeric input, and the output numeric base for the results of calculations. \
+These properties can be changed via the Input Defaults and Output Base settings.\n\
 \n\
 The following codes are used to report this information:\n\
 \n\
@@ -252,7 +267,7 @@ const char prefixes_txt[] = "\
 A number may optionally be given a prefix to specify its numeric base and \
 representation type, overriding the default ones:\n\
 \n\
-(Note: '0' is the character zero, not the uppercase letter O.)\n\
+(Note: '0' is zero, not the uppercase letter O.)\n\
 \n\
 0b or 0bi - Signed integer type, binary base; e.g.: 0b1010, 0bi1010\n\
 0o or 0oi - Signed integer type, octal base; e.g.: 0o12, 0oi12\n\
@@ -350,30 +365,66 @@ Variable assignments can be chained; e.g., x=y=2 assigns 2 to both x and y.\n\
 \n\
 A variable can be deleted with the delete command; e.g., delete x.";
 
-const char options_txt[] = "\
-Options may be specified via the Options window or by typing their codes into \
-the main input field; e.g., @0b is the code for the <b>input defaults</b> signed \
-integer type, binary base option.\n\
+const char settings_window_txt[] = "\
+This describes the Settings window for entering application settings.\n\
 \n\
-<b>Input defaults:</b>\n\
+<b>Input Defaults:</b>\n\
 \n\
-Specifies the default representation type and numeric base to apply to numbers \
-being input when either or both properties cannot be determined from the input; \
-e.g., if an inputtted number has neither a prefix nor a decimal point nor an \
-exponent then both defaults will apply to it, otherwise if it has a decimal \
-point or an exponent, but no prefix, then the representation type will be \
-complex type and the default numeric base will apply to it, otherwise if it has \
-a prefix then neither default will apply to it.\n\
+These listboxes specify the default representation type (left listbox) and \
+numeric base (right listbox) to interpret numeric input in. Representation \
+types and numeric bases are described in the Representation Types and Numeric \
+Bases topic. The default defaults are complex type and decimal base.\n\
 \n\
-Input defaults options:\n\
+Note: If a number is input with a decimal point or exponent then it will be \
+represented as complex type regardless of what the default representation type \
+is. Also, if a number is input with a prefix then the prefix will override these \
+defaults as described in the Prefix topic.\n\
 \n\
-(Note: '0' is the character zero, not the uppercase letter O.)\n\
+Note 2: The 0b and 0d prefixes are not recognized when the default numeric base \
+is hexadecimal because those are valid hexadecimal numbers. (In that case, 0bi \
+and 0di can be used instead.)\n\
+\n\
+<b>Output Base:</b>\n\
+\n\
+This listbox specifies the numeric base to output numbers in (the results of \
+calculations); the default is decimal base. Note that numbers can be input in \
+one base and output in another.\n\
+\n\
+<b>Normalized Scientific P Notation:</b>\n\
+\n\
+If this switch's state is on then binary, octal and hexadecimal floating point \
+type numbers will be output in normalized scientific P notation. If off then \
+very large and very small binary, octal and hexadecimal floating point type \
+numbers will be output in unnormalized scientific P notation (\"regular\" such \
+numbers will be output normally); this is the default. Scientific P notation \
+is described in the Scientific Notation topic.\n\
+\n\
+<b>Floating Point Output Precision:</b>\n\
+\n\
+This entry field specifies the maximum precision (number of significant digits) \
+in which a number may be output. Affects floating point type (component of \
+complex type) numbers only. The default value is 50. The value 0 is special and \
+means full precision, including guard digits.\n\
+\n\
+<b>Integer Word Size:</b>\n\
+\n\
+This listbox specifies the word size for integer type numbers. 128 bits is the \
+default.\n\
+\n\
+Note: This does not affect complex type numbers.";
+
+const char settings_textual_txt[] = "\
+Application settings may be specified textually by entering their codes into \
+the expression input field; e.g., @0b @w16.\n\
+\n\
+<b>Input Defaults:</b>\n\
+\n\
+(Note: '0' is zero, not the uppercase letter O.)\n\
 \n\
 @0b or @0bi - Signed integer type, binary base; e.g.: 1010\n\
 @0o or @0oi - Signed integer type, octal base; e.g.: 12\n\
 @0d or @0di - Signed integer type, decimal base; e.g.: 10\n\
-@0x or @0xi - Signed integer type, hexadecimal base; e.g.: 0a (prepend a number \
-with 0 if it begins with a letter digit)\n\
+@0x or @0xi - Signed integer type, hexadecimal base; e.g.: 0a\n\
 @0bu - Unsigned integer type, binary base\n\
 @0ou - Unsigned integer type, octal base\n\
 @0du - Unsigned integer type, decimal base\n\
@@ -383,17 +434,7 @@ with 0 if it begins with a letter digit)\n\
 @0dn - Complex type, decimal base; e.g., 10, 10+2i -- the default default\n\
 @0xn - Complex type, hexadecimal base; e.g., 0a, 0a+2i\n\
 \n\
-Note: If a number is specified with a decimal point or exponent then it will be \
-represented as complex type regardless of what <b>input defaults</b> specifies; e.g., \
-even if @0xi or @0xu is given, the number 0a.1 will be represented as complex type.\n\
-\n\
-Note 2: The 0b and 0d prefixes are not recognized when the default numeric base is \
-hexadecimal because they are valid hexadecimal numbers. (In that case, 0bi and \
-0di can be used instead.)\n\
-\n\
-<b>Output base:</b>\n\
-\n\
-Specifies the output numeric base for the results of calculations:\n\
+<b>Output Base:</b>\n\
 \n\
 @ob - Binary\n\
 @oo - Octal\n\
@@ -402,38 +443,34 @@ Specifies the output numeric base for the results of calculations:\n\
 \n\
 <b>Mode:</b>\n\
 \n\
-Combines <b>input defaults</b> and <b>output base</b>: @mb (@0b @ob), @mo (@0o @oo), @md \
-(@0d @od), @mx (@0x @ox), @mbi (@0bi @ob), @moi (@0oi @oo), @mdi (@0di @od), @mxi \
-(@0xi @ox), @mbu (@0bu @ob), @mou (@0ou @oo), @mdu (@0du @od), @mxu (@0xu @ox), \
-@mbn (@0bn @ob), @mon (@0on @oo), @mdn (@0dn @od), @mxn (@0xn @ox).\n\
+Combines <b>Input Defaults</b> and <b>Output Base</b>: @mb (@0b @ob), @mo (@0o \
+@oo), @md (@0d @od), @mx (@0x @ox), @mbi (@0bi @ob), @moi (@0oi @oo), @mdi \
+(@0di @od), @mxi (@0xi @ox), @mbu (@0bu @ob), @mou (@0ou @oo), @mdu (@0du @od), \
+@mxu (@0xu @ox), @mbn (@0bn @ob), @mon (@0on @oo), @mdn (@0dn @od), @mxn (@0xn \
+@ox).\n\
 \n\
-Mode is not supported in the Options window.\n\
+Mode is not available in the Settings window.\n\
 \n\
-<b>P notation:</b>\n\
+<b>Normalized Scientific P Notation:</b>\n\
 \n\
-@pn specifies that binary, octal and hexadecimal floating point type numbers \
+@pn - Specifies that binary, octal and hexadecimal floating point type numbers \
 be output in normalized scientific P notation.\n\
 \n\
-@pu specifies that very large and very small binary, octal and hexadecimal \
-floating point type numbers be output in unnormalized scientific P notation. -- \
-the default\n\
+@pu - Specifies that very large and very small binary, octal and hexadecimal \
+floating point type numbers be output in unnormalized scientific P notation. \
+-- the default\n\
 \n\
-<b>Precision:</b>\n\
+<b>Floating Point Output Precision:</b>\n\
 \n\
-@pr<i>n</i> specifies the maximum precision (number of significant digits) in \
-which a number is output, given as <i>n</i>. Affects floating point type \
-(complex type) numbers only. E.g., @pr15. The default value is 50. The value 0 \
-is special and means full precision including guard digits.\n\
+@pr<i>n</i> where <i>n</i> is the precision value; e.g., @pr15. The default \
+value is 50.\n\
 \n\
-<b>Integer word size:</b>\n\
+<b>Integer Word Size:</b>\n\
 \n\
-Specifies the word size for integer types:\n\
-\n\
-@w8   -   8 bits\n\
-@w16  -  16 bits\n\
-@w32  -  32 bits\n\
-@w64  -  64 bits\n\
-@w128 - 128 bits -- the default\n\
-\n\
-Note: This does not affect complex type numbers.";
+@w8 - 8 bits\n\
+@w16 - 16 bits\n\
+@w32 - 32 bits\n\
+@w64 - 64 bits\n\
+@w128 - 128 bits -- the default";
+
 } // anonymous namespace

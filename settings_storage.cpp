@@ -1,9 +1,9 @@
-#include "calc_settings.hpp"
+#include "settings_storage.hpp"
 #include <filesystem>
 
 namespace pt = boost::property_tree;
 
-calc_settings::calc_settings(Gtk::Window &parent_win) :
+settings_storage::settings_storage(Gtk::Window &parent_win) :
     error_msg(parent_win, "", /*use_markup*/ false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, /*modal*/ true)
 {
     error_msg.set_hide_on_close(true);
@@ -125,7 +125,7 @@ static auto to_str(calc_val::int_word_sizes code) -> const char* {
     }
 }
 
-auto calc_settings::show_err_msg(const pt::ptree_error& e, const char *msg, const std::string &file_pathname) -> void {
+auto settings_storage::show_err_msg(const pt::ptree_error& e, const char *msg, const std::string &file_pathname) -> void {
     error_msg.set_message(msg);
     Glib::ustring secondary;
     secondary.reserve(256);
@@ -138,7 +138,7 @@ auto calc_settings::show_err_msg(const pt::ptree_error& e, const char *msg, cons
     error_msg.show();
 };
 
-auto calc_settings::load(parser_options &parse_options, output_options &out_options) -> void {
+auto settings_storage::load(parser_options &parse_options, output_options &out_options) -> void {
     std::string file_pathname;
     try {
         file_pathname = file_path();
@@ -181,7 +181,7 @@ auto calc_settings::load(parser_options &parse_options, output_options &out_opti
     }
 }
 
-auto calc_settings::save(const parser_options &parse_options, const output_options &out_options) -> void {
+auto settings_storage::save(const parser_options &parse_options, const output_options &out_options) -> void {
     std::string file_pathname;
     try {
         pt::ptree tree;

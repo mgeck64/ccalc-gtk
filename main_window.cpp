@@ -2,7 +2,7 @@
 #include "gcalc_app.hpp"
 #include "gcalc_basics.hpp"
 #include "help_window.hpp"
-#include "options_window.hpp"
+#include "settings_window.hpp"
 #include "variables_window.hpp"
 
 #include "ccalc/calc_parse_error.hpp"
@@ -21,8 +21,8 @@ main_window::main_window(gcalc_app& app_) :
     in_out_info_hbox(Gtk::Orientation::HORIZONTAL),
     menus_hbox(Gtk::Orientation::HORIZONTAL),
     expr_btn("="),
-    options_btn("_Options"),
-    settings(*this)
+    settings_btn("_Settings"),
+    settings_storager(*this)
  {
     set_child(win_vbox);
 
@@ -121,11 +121,11 @@ main_window::main_window(gcalc_app& app_) :
         add_action(*functions_b_menu, "atanh() - Inverse hyperbolic tan", "atanh", "functions.atanh");
     }
 
-    menus_hbox.append(options_btn);
-    options_btn.set_margin(0);
-    options_btn.set_hexpand(true);
-    options_btn.set_use_underline(true);
-    options_btn.signal_clicked().connect(sigc::mem_fun(*this, &main_window::on_options_btn_clicked));
+    menus_hbox.append(settings_btn);
+    settings_btn.set_margin(0);
+    settings_btn.set_hexpand(true);
+    settings_btn.set_use_underline(true);
+    settings_btn.signal_clicked().connect(sigc::mem_fun(*this, &main_window::on_settings_btn_clicked));
 
     {
         auto more_action_group = Gio::SimpleActionGroup::create();
@@ -147,7 +147,7 @@ main_window::main_window(gcalc_app& app_) :
         more_menu->append("Help", "more.help");
     }
 
-    settings.load(parse_options, out_options);
+    settings_storager.load(parse_options, out_options);
     parser.options(parse_options);
 
     show_input_info();
@@ -276,13 +276,13 @@ auto main_window::on_function_action(const char* label) -> void {
     expr_entry.grab_focus_without_selecting();
 }
 
-auto main_window::on_options_btn_clicked() -> void {
-    if (options_win)
-        options_win->present();
+auto main_window::on_settings_btn_clicked() -> void {
+    if (settings_win)
+        settings_win->present();
     else {
-        options_win = std::make_unique<options_window>(app, *this);
-        options_win->signal_close_request().connect(sigc::bind(sigc::mem_fun(*this, &main_window::on_close_request), options_win.get()), false);
-        options_win->show();
+        settings_win = std::make_unique<settings_window>(app, *this);
+        settings_win->signal_close_request().connect(sigc::bind(sigc::mem_fun(*this, &main_window::on_client_close_request), settings_win.get()), false);
+        settings_win->show();
     }
 }
 
@@ -291,7 +291,7 @@ auto main_window::on_variables_btn_clicked() -> void {
         variables_win->present();
     else {
         variables_win = std::make_unique<variables_window>();
-        variables_win->signal_close_request().connect(sigc::bind(sigc::mem_fun(*this, &main_window::on_close_request), variables_win.get()), false);
+        variables_win->signal_close_request().connect(sigc::bind(sigc::mem_fun(*this, &main_window::on_client_close_request), variables_win.get()), false);
 
         variables_win->show(); // show needs to be called before set otherwise
         // content will inexplicably be selected and cursor will be visible. see
@@ -354,8 +354,8 @@ auto main_window::options(const parser_options& parse_options, const output_opti
 auto main_window::update_if_options_changed(const output_options& new_out_options) -> void {
     auto new_parse_options = parser.options();
 
-    if (options_win)
-        options_win->update_from(parse_options, new_parse_options, out_options, new_out_options);
+    if (settings_win)
+        settings_win->update_from(parse_options, new_parse_options, out_options, new_out_options);
 
     bool options_changed = false;
     if (parse_options != new_parse_options) {
@@ -375,17 +375,23 @@ auto main_window::update_if_options_changed(const output_options& new_out_option
         on_variables_changed(); // output format changed; redisplay
     }
     if (options_changed)
-        settings.save(new_parse_options, new_out_options);
+        settings_storager.save(new_parse_options, new_out_options);
 }
 
-auto main_window::on_close_request(Gtk::Window* win) -> bool {
+auto main_window::on_close_request() -> bool {
+    variables_win.reset();
+    settings_win.reset();
+    return Gtk::Window::on_close_request();
+}
+
+auto main_window::on_client_close_request(Gtk::Window* win) -> bool {
     assert(win);
     if (win == variables_win.get()) {
         variables_win.reset();
         return true;
     }
-    if (win == options_win.get()) {
-        options_win.reset();
+    if (win == settings_win.get()) {
+        settings_win.reset();
         return true;
     }
     return false;
