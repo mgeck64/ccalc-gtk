@@ -39,9 +39,9 @@ private:
     Gtk::Entry expr_entry;
     Gtk::Button expr_btn;
     Gtk::Frame result_frame;
-    Gtk::Label result_label;
-    Gtk::Label in_info_label;
-    Gtk::Label out_info_label;
+    Gtk::Label result_lbl;
+    Gtk::Label in_info_lbl;
+    Gtk::Label out_info_lbl;
     Gtk::MenuButton functions_a_btn;
     Gtk::MenuButton functions_b_btn;
     Gtk::Button settings_btn;
