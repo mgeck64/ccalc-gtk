@@ -61,7 +61,7 @@ help_window::help_window(int topic_idx) :
     top_hbox.append(next_topic_btn);
 
     {
-        auto setup = [&] (Gtk::ScrolledWindow& swin, Gtk::Label& lbl, const char* txt) {
+        auto setup = [&](Gtk::ScrolledWindow& swin, Gtk::Label& lbl, const char* txt) {
             vbox.append(swin);
             swin.set_margin(default_margin);
             swin.set_child(lbl);
