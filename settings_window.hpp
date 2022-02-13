@@ -34,7 +34,7 @@ private:
     main_window& main_win;
     Gtk::Box win_vbox;
     Gtk::Box content_vbox;
-    Gtk::Label title;
+    Gtk::Label title_lbl;
     Gtk::Box input_defaults_vbox;
     Gtk::Box input_defaults_hbox;
     Gtk::Label input_defaults_lbl;
@@ -50,13 +50,13 @@ private:
     Gtk::Label integer_word_size_lbl;
     Gtk::ComboBoxText int_word_size_cb;
     Gtk::Box bottom_hbox;
-    Gtk::Button help;
-    Gtk::Button defaults;
-    Gtk::Button cancel;
+    Gtk::Button help_btn;
+    Gtk::Button defaults_btn;
+    Gtk::Button cancel_btn;
 
     auto on_setting_changed() -> void;
-    auto on_help_clicked() -> void;
-    auto on_defaults_clicked() -> void;
+    auto on_help_btn_clicked() -> void;
+    auto on_defaults_btn_clicked() -> void;
 };
 
 #endif // SETTINGS_WINDOW_HPP

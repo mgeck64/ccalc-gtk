@@ -4,6 +4,8 @@
 #include "main_window.hpp"
 #include "help_window.hpp"
 
+#include <giomm/simpleactiongroup.h>
+
 static constexpr auto division_top_margin = default_margin * 4;
 
 settings_window::settings_window(gcalc_app& app_, main_window& main_win_) :
@@ -14,9 +16,9 @@ settings_window::settings_window(gcalc_app& app_, main_window& main_win_) :
     input_defaults_vbox(Gtk::Orientation::VERTICAL),
     input_defaults_hbox(Gtk::Orientation::HORIZONTAL),
     bottom_hbox(Gtk::Orientation::HORIZONTAL),
-    help("_Help"),
-    defaults("_Defaults"),
-    cancel("_Cancel")
+    help_btn("_Help"),
+    defaults_btn("_Defaults"),
+    cancel_btn("_Cancel")
 {
     set_resizable(false);
     set_child(win_vbox);
@@ -24,10 +26,10 @@ settings_window::settings_window(gcalc_app& app_, main_window& main_win_) :
     win_vbox.append(content_vbox);
     content_vbox.set_margin(default_margin);
 
-    content_vbox.append(title);
-    title.set_margin(default_margin);
-    title.set_markup("<big><b>Settings</b></big>");
-    title.set_halign(Gtk::Align::START);
+    content_vbox.append(title_lbl);
+    title_lbl.set_margin(default_margin);
+    title_lbl.set_markup("<big><b>Settings</b></big>");
+    title_lbl.set_halign(Gtk::Align::START);
 
     content_vbox.append(settings_grid);
     settings_grid.set_margin(default_margin);
@@ -107,24 +109,23 @@ settings_window::settings_window(gcalc_app& app_, main_window& main_win_) :
     win_vbox.append(bottom_hbox);
     bottom_hbox.set_vexpand(false);
 
-    bottom_hbox.append(help);
-    help.set_margin(0);
-    help.set_expand(true);
-    help.set_use_underline(true);
-    help.signal_clicked().connect(sigc::mem_fun(*this, &settings_window::on_help_clicked));
+    bottom_hbox.append(help_btn);
+    help_btn.set_margin(0);
+    help_btn.set_expand(true);
+    help_btn.set_use_underline(true);
+    help_btn.signal_clicked().connect(sigc::mem_fun(*this, &settings_window::on_help_btn_clicked));
  
-    bottom_hbox.append(defaults);
-    defaults.set_margin(0);
-    defaults.set_expand(true);
-    defaults.set_use_underline(true);
-    defaults.signal_clicked().connect(sigc::mem_fun(*this, &settings_window::on_defaults_clicked));
+    bottom_hbox.append(defaults_btn);
+    defaults_btn.set_margin(0);
+    defaults_btn.set_expand(true);
+    defaults_btn.set_use_underline(true);
+    defaults_btn.signal_clicked().connect(sigc::mem_fun(*this, &settings_window::on_defaults_btn_clicked));
 
     auto [parse_options, out_options] = main_win.options();
     update_from(parse_options, parse_options, out_options, out_options, /*force*/ true);
 };
 
 settings_window::~settings_window() {
-    on_setting_changed(); // incase precision edit field has a edit that didn't trigger a change
     if (this == app.help_invoker())
         app.close_help();
 }
@@ -219,11 +220,11 @@ auto settings_window::on_setting_changed() -> void {
     main_win.options(parse_options, out_options);
 }
 
-auto settings_window::on_help_clicked() -> void {
+auto settings_window::on_help_btn_clicked() -> void {
     app.help(this, help_window::settings_window_idx, /*force_topic*/ true);
 }
 
-auto settings_window::on_defaults_clicked() -> void {
+auto settings_window::on_defaults_btn_clicked() -> void {
     auto parse_options = parser_options();
     auto out_options = output_options();
     update_from(parse_options, parse_options, out_options, out_options, /*force*/ true);
