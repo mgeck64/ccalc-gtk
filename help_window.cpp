@@ -19,46 +19,46 @@ extern const char settings_textual_txt[];
 help_window::help_window(int topic_idx) :
     vbox(Gtk::Orientation::VERTICAL),
     top_hbox(Gtk::Orientation::HORIZONTAL),
-    prev_topic("\u25b2"),
-    next_topic("\u25bc")
+    prev_topic_btn("\u25b2"),
+    next_topic_btn("\u25bc")
 {
     set_default_size(550, 500);
 
     vbox.set_margin(default_margin);
     set_child(vbox);
 
-    title.set_margin(default_margin);
-    title.set_halign(Gtk::Align::START);
-    title.set_markup("<big><b>Basic guide</b></big>");
-    vbox.append(title);
+    title_lbl.set_margin(default_margin);
+    title_lbl.set_halign(Gtk::Align::START);
+    title_lbl.set_markup("<big><b>Basic guide</b></big>");
+    vbox.append(title_lbl);
 
     vbox.append(top_hbox);
 
-    topics.set_margin(default_margin);
-    topics.set_hexpand(true);
-    topics.append("Quick Start");
-    topics.append("Representation Types and Numeric Bases");
-    topics.append("Input/Output Information Area");
-    topics.append("Scientific Notation");
-    topics.append("Prefixes");
-    topics.append("Implied Multiplication");
-    topics.append("Functions");
-    topics.append("Bitwise Operators");
-    topics.append("Variables");
-    topics.append("Settings Window");
-    topics.append("Settings -- Textual Input");
-    topics.signal_changed().connect(sigc::mem_fun(*this, &help_window::on_topics_changed));
-    top_hbox.append(topics);
+    topics_cb.set_margin(default_margin);
+    topics_cb.set_hexpand(true);
+    topics_cb.append("Quick Start");
+    topics_cb.append("Representation Types and Numeric Bases");
+    topics_cb.append("Input/Output Information Area");
+    topics_cb.append("Scientific Notation");
+    topics_cb.append("Prefixes");
+    topics_cb.append("Implied Multiplication");
+    topics_cb.append("Functions");
+    topics_cb.append("Bitwise Operators");
+    topics_cb.append("Variables");
+    topics_cb.append("Settings Window");
+    topics_cb.append("Settings -- Textual Input");
+    topics_cb.signal_changed().connect(sigc::mem_fun(*this, &help_window::on_topics_changed));
+    top_hbox.append(topics_cb);
 
-    prev_topic.set_margin(default_margin);
-    prev_topic.set_margin_end(0);
-    prev_topic.signal_clicked().connect(sigc::mem_fun(*this, &help_window::on_prev_topic_clicked));
-    top_hbox.append(prev_topic);
+    prev_topic_btn.set_margin(default_margin);
+    prev_topic_btn.set_margin_end(0);
+    prev_topic_btn.signal_clicked().connect(sigc::mem_fun(*this, &help_window::on_prev_topic_clicked));
+    top_hbox.append(prev_topic_btn);
 
-    next_topic.set_margin(default_margin);
-    next_topic.set_margin_start(0);
-    next_topic.signal_clicked().connect(sigc::mem_fun(*this, &help_window::on_next_topic_clicked));
-    top_hbox.append(next_topic);
+    next_topic_btn.set_margin(default_margin);
+    next_topic_btn.set_margin_start(0);
+    next_topic_btn.signal_clicked().connect(sigc::mem_fun(*this, &help_window::on_next_topic_clicked));
+    top_hbox.append(next_topic_btn);
 
     {
         auto setup = [&] (Gtk::ScrolledWindow& swin, Gtk::Label& lbl, const char* txt) {
@@ -92,12 +92,12 @@ help_window::help_window(int topic_idx) :
 }
 
 auto help_window::on_topics_changed() -> void {
-    auto idx = topics.get_active_row_number();
+    auto idx = topics_cb.get_active_row_number();
     show_topic(idx);
 }
 
 auto help_window::on_prev_topic_clicked() -> void {
-    auto idx = topics.get_active_row_number();
+    auto idx = topics_cb.get_active_row_number();
     if (idx > 0)
         show_topic(idx - 1);
     else if (auto p = get_display())
@@ -105,7 +105,7 @@ auto help_window::on_prev_topic_clicked() -> void {
 }
 
 auto help_window::on_next_topic_clicked() -> void {
-    auto idx = topics.get_active_row_number();
+    auto idx = topics_cb.get_active_row_number();
     if (idx < num_topics - 1)
         show_topic(idx + 1);
     else if (auto p = get_display())
@@ -166,7 +166,7 @@ auto help_window::show_topic(int topic_idx) -> void {
             settings_textual_swin.show(); break;
     }
     last_topic_idx = topic_idx;
-    topics.set_active(topic_idx);
+    topics_cb.set_active(topic_idx);
 }
 
 namespace {

@@ -20,11 +20,11 @@ public:
 
 private:
     Gtk::Box vbox;
-    Gtk::Label title;
+    Gtk::Label title_lbl;
     Gtk::Box top_hbox;
-    Gtk::ComboBoxText topics;
-    Gtk::Button prev_topic;
-    Gtk::Button next_topic;
+    Gtk::ComboBoxText topics_cb;
+    Gtk::Button prev_topic_btn;
+    Gtk::Button next_topic_btn;
 
     Gtk::ScrolledWindow quick_start_swin;
     Gtk::ScrolledWindow representation_types_and_numeric_bases_swin;
