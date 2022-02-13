@@ -145,6 +145,7 @@ main_window::main_window(gcalc_app& app_) :
 
         more_action_group->add_action("help", sigc::mem_fun(*this, &main_window::on_help_btn_clicked));
         more_menu->append("Help", "more.help");
+        app.set_accel_for_action("more.help", "F1");
     }
 
     settings_storager.load(parse_options, out_options);
