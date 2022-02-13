@@ -3,6 +3,7 @@
 
 #include "main_window.hpp"
 #include "help_window.hpp"
+#include "variables_window.hpp"
 #include "settings_window.hpp"
 
 gcalc_app::gcalc_app() :
