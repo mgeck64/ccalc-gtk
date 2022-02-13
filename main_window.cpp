@@ -49,10 +49,9 @@ main_window::main_window(gcalc_app& app_) :
     content_vbox.append(result_frame);
     result_frame.set_child(result_lbl);
     result_frame.set_margin(default_margin);
-    result_lbl.set_vexpand(true);
     result_lbl.set_halign(Gtk::Align::START);
     result_lbl.set_selectable(true);
- 
+
     content_vbox.append(in_out_info_hbox);
     in_out_info_hbox.append(in_info_lbl);
     in_out_info_hbox.append(out_info_lbl);
@@ -62,6 +61,11 @@ main_window::main_window(gcalc_app& app_) :
     out_info_lbl.set_margin(default_margin);
     out_info_lbl.set_hexpand(true);
     out_info_lbl.set_halign(Gtk::Align::END);
+
+    content_vbox.append(empty_expandable_region);
+    empty_expandable_region.set_vexpand(true);
+    // if the user resizes the window vertically then this area will expand and
+    // not the area at the bottom of the window
 
     win_vbox.append(menus_hbox);
 

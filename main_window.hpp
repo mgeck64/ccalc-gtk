@@ -40,6 +40,7 @@ private:
     Gtk::Button expr_btn;
     Gtk::Frame result_frame;
     Gtk::Label result_lbl;
+    Gtk::Box empty_expandable_region;
     Gtk::Label in_info_lbl;
     Gtk::Label out_info_lbl;
     Gtk::MenuButton functions_a_btn;
