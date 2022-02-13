@@ -17,9 +17,9 @@ public:
 
 private:
     Gtk::Box content_vbox;
-    Gtk::Label title;
+    Gtk::Label title_lbl;
     Gtk::ScrolledWindow variables_scroller;
-    Gtk::Label variables;
+    Gtk::Label variables_lbl;
 };
 
 #endif // VARIABLES_DIALOG_HPP
