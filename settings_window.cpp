@@ -18,6 +18,7 @@ settings_window::settings_window(gcalc_app& app_, main_window& main_win_) :
     defaults("_Defaults"),
     cancel("_Cancel")
 {
+    set_resizable(false);
     set_child(win_vbox);
 
     win_vbox.append(content_vbox);
