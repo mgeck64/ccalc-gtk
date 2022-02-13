@@ -62,10 +62,10 @@ main_window::main_window(gcalc_app& app_) :
     out_info_lbl.set_hexpand(true);
     out_info_lbl.set_halign(Gtk::Align::END);
 
+    // if the user resizes the window vertically then this area will expand
+    // instead of the area at the bottom--looks better even though it's empty
     content_vbox.append(empty_expandable_region);
     empty_expandable_region.set_vexpand(true);
-    // if the user resizes the window vertically then this area will expand and
-    // not the area at the bottom of the window
 
     win_vbox.append(menus_hbox);
 
