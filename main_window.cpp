@@ -18,7 +18,7 @@ main_window::main_window(gcalc_app& app_) :
     win_vbox(Gtk::Orientation::VERTICAL),
     content_vbox(Gtk::Orientation::VERTICAL),
     expr_hbox(Gtk::Orientation::HORIZONTAL),
-    expr_btn("="),
+//    expr_btn("="),
     result_vbox(Gtk::Orientation::VERTICAL),
     in_out_info_hbox(Gtk::Orientation::HORIZONTAL),
     menus_hbox(Gtk::Orientation::HORIZONTAL),
@@ -45,6 +45,10 @@ main_window::main_window(gcalc_app& app_) :
 
     expr_hbox.append(expr_btn);
     expr_btn.set_margin(default_margin);
+    expr_btn.set_child(expr_btn_lbl);
+    expr_btn_lbl.set_markup("<big>=</big>");
+    // putting the label in the button this way instead of in the ctor that
+    // takes a string causes the button to take less space!
     expr_btn.signal_clicked().connect(sigc::mem_fun(*this, &main_window::on_expr_btn_clicked));
 
     content_vbox.append(result_frame);

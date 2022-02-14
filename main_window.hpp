@@ -36,6 +36,7 @@ private:
     Gtk::Box expr_hbox;
     Gtk::Entry expr_entry;
     Gtk::Button expr_btn;
+    Gtk::Label expr_btn_lbl;
     Gtk::Frame result_frame;
     Gtk::Box result_vbox;
     Gtk::Label result_lbl;
