@@ -89,7 +89,7 @@ settings_window::settings_window(gcalc_app& app_, main_window& main_win_) :
 
     settings_grid.attach(precision_entry, 2, 4, 1, 1);
     precision_entry.set_halign(Gtk::Align::END);
-    precision_entry.set_range(0, 50);
+    precision_entry.set_range(0, std::numeric_limits<calc_val::float_type>::digits);
     precision_entry.set_increments(1, 10);
     precision_entry.signal_value_changed().connect(sigc::mem_fun(*this, &settings_window::on_setting_changed));
 

@@ -51,6 +51,8 @@ main_window::main_window(gcalc_app& app_) :
     result_frame.set_margin(default_margin);
     result_lbl.set_halign(Gtk::Align::START);
     result_lbl.set_selectable(true);
+    result_lbl.set_wrap(true);
+    result_lbl.set_wrap_mode(Pango::WrapMode::WORD_CHAR);
 
     content_vbox.append(in_out_info_hbox);
     in_out_info_hbox.append(in_info_lbl);

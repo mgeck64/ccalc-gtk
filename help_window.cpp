@@ -212,7 +212,7 @@ default, it processes numbers of complex type, but this can be changed via the \
 Input Defaults settings.\n\
 \n\
 Complex type: Represents a complex number composed of a real and imaginary part, \
-both of which are high precision floating point types (50 significant decimal \
+both of which are high precision floating point types (100 significant decimal \
 digits). A full complex number can be specified in the common form a+bi. \
 (A complex type number can also be an ordinary real number, of course.)\n\
 \n\
@@ -403,8 +403,13 @@ is described in the Scientific Notation topic.\n\
 \n\
 This entry field specifies the maximum precision (number of significant digits) \
 in which a number may be output. Affects floating point type (component of \
-complex type) numbers only. The default value is 50. The value 0 is special and \
-means full precision, including guard digits.\n\
+complex type) numbers only. The default value is 25. The maximum is 100. The \
+value 0 is special and means full precision, including guard digits.\n\
+\n\
+Note: This does not affect the precision of floating point numbers in \
+calculations, which are always performed using full precision. Thus, you can \
+specify a small number to display but have calculations performed at full \
+precision.\n\
 \n\
 <b>Integer Word Size:</b>\n\
 \n\
@@ -468,7 +473,7 @@ floating point type numbers be output in unnormalized scientific P notation. \
 <b>Floating Point Output Precision:</b>\n\
 \n\
 @pr<i>n</i> where <i>n</i> is the precision value; e.g., @pr15. The default \
-value is 50.\n\
+value is 25.\n\
 \n\
 <b>Integer Word Size:</b>\n\
 \n\
