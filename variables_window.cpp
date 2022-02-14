@@ -32,12 +32,12 @@ variables_window::variables_window() :
 }
 
 void variables_window::set(calc_parser::variables_itr begin, calc_parser::variables_itr end, const output_options& out_options) {
-    variables_lbl.set_selectable(true); // this should be done in ctor but when it
-    // is done there the cursor inexplicibly shows; doing this here won't cause
-    // cursor to show. see also main_window::on_variables_btn_clicked. sigh!
+    variables_lbl.set_selectable(true); // this should be done in ctor but when
+    // done there the cursor inexplicibly shows; doing this here won't cause the
+    // cursor to show. see also main_window::on_variables_btn_clicked
 
     if (begin == end) {
-        variables_lbl.set_label("There are no variables defined.");
+        variables_lbl.set_label("No variables are defined.");
         return;
     }
 
