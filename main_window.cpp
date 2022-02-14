@@ -363,6 +363,17 @@ auto main_window::update_if_options_changed(const output_options& new_out_option
         settings_win->update_from(parse_options, new_parse_options, out_options, new_out_options);
 
     bool options_changed = false;
+
+    if (parse_options.int_word_size != new_parse_options.int_word_size) {
+        options_changed = true;
+        parse_options.int_word_size = new_parse_options.int_word_size;
+        if (last_result_kind == value_kind) {
+            std::ostringstream out;
+            out << calc_outputter(new_out_options)(parser.trimmed_last_val());
+            result_lbl.set_text(out.str());
+        }
+        // note: variables don't change when int_word_size changes
+    }
     if (parse_options != new_parse_options) {
         options_changed = true;
         parse_options = new_parse_options;
