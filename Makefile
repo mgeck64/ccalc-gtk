@@ -33,7 +33,7 @@ RELOBJS = $(addprefix $(RELDIR)/, $(OBJS))
 RELDEPS = $(RELOBJS:%.o=%.d)
 RELFLAGS = -Os -DNDEBUG
 
-.PHONY: all clean debug release remake
+.PHONY: all clean debug release remake dbglink rellink
 
 # Default build
 all: release
@@ -41,10 +41,15 @@ all: release
 #
 # Debug rules
 #
+DBGLINK = $(CCXX) -o $(DBGEXE) $(DBGOBJS) -lccalc-dbg $(GTKLIBS)
+
 debug: make_dbgdir $(DBGEXE)
 
+dbglink:
+		$(DBGLINK)
+
 $(DBGEXE): $(DBGOBJS)
-		$(CCXX) -o $(DBGEXE) $^ -lccalc-dbg $(GTKLIBS)
+		$(DBGLINK)
 
 -include $(DBGDEPS)
 
@@ -57,10 +62,15 @@ $(DBGDIR)/%.o: %.c
 #
 # Release rules
 #
+RELLINK = $(CCXX) -o $(RELEXE) $(RELOBJS) -lccalc-rel $(GTKLIBS)
+
 release: make_reldir $(RELEXE)
 
+rellink:
+		$(RELLINK)
+
 $(RELEXE): $(RELOBJS)
-		$(CCXX) -o $(RELEXE) $^ -lccalc-rel $(GTKLIBS)
+		$(RELLINK)
 
 -include $(RELDEPS)
 
@@ -84,4 +94,3 @@ remake: clean all
 
 clean:
 		@rm -r -f $(RELDIR) $(DBGDIR)
-

@@ -8,7 +8,7 @@
 variables_window::variables_window() :
     content_vbox(Gtk::Orientation::VERTICAL)
 {
-    set_default_size(200, 300);
+    set_default_size(200, 250);
 
     set_child(content_vbox);
     content_vbox.set_margin(default_margin);
