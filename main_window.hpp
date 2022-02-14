@@ -34,15 +34,16 @@ private:
     Gtk::Box win_vbox;
     Gtk::Box content_vbox;
     Gtk::Box expr_hbox;
-    Gtk::Box in_out_info_hbox;
-    Gtk::Box menus_hbox;
     Gtk::Entry expr_entry;
     Gtk::Button expr_btn;
     Gtk::Frame result_frame;
+    Gtk::Box result_vbox;
     Gtk::Label result_lbl;
     Gtk::Box empty_expandable_region;
+    Gtk::Box in_out_info_hbox;
     Gtk::Label in_info_lbl;
     Gtk::Label out_info_lbl;
+    Gtk::Box menus_hbox;
     Gtk::MenuButton functions_a_btn;
     Gtk::MenuButton functions_b_btn;
     Gtk::Button settings_btn;

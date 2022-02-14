@@ -18,9 +18,10 @@ main_window::main_window(gcalc_app& app_) :
     win_vbox(Gtk::Orientation::VERTICAL),
     content_vbox(Gtk::Orientation::VERTICAL),
     expr_hbox(Gtk::Orientation::HORIZONTAL),
+    expr_btn("="),
+    result_vbox(Gtk::Orientation::VERTICAL),
     in_out_info_hbox(Gtk::Orientation::HORIZONTAL),
     menus_hbox(Gtk::Orientation::HORIZONTAL),
-    expr_btn("="),
     settings_btn("_Settings"),
     settings_storager(*this)
  {
@@ -47,12 +48,19 @@ main_window::main_window(gcalc_app& app_) :
     expr_btn.signal_clicked().connect(sigc::mem_fun(*this, &main_window::on_expr_btn_clicked));
 
     content_vbox.append(result_frame);
-    result_frame.set_child(result_lbl);
     result_frame.set_margin(default_margin);
+    result_frame.set_child(result_vbox);
+    result_vbox.append(result_lbl);
+    result_lbl.set_margin(default_margin);
     result_lbl.set_halign(Gtk::Align::START);
     result_lbl.set_selectable(true);
     result_lbl.set_wrap(true);
     result_lbl.set_wrap_mode(Pango::WrapMode::WORD_CHAR);
+
+    // if the user resizes the window vertically then this area will expand
+    // instead of the area at the bottom--looks better even though it's empty
+    result_vbox.append(empty_expandable_region);
+    empty_expandable_region.set_vexpand(true);
 
     content_vbox.append(in_out_info_hbox);
     in_out_info_hbox.append(in_info_lbl);
@@ -63,11 +71,6 @@ main_window::main_window(gcalc_app& app_) :
     out_info_lbl.set_margin(default_margin);
     out_info_lbl.set_hexpand(true);
     out_info_lbl.set_halign(Gtk::Align::END);
-
-    // if the user resizes the window vertically then this area will expand
-    // instead of the area at the bottom--looks better even though it's empty
-    content_vbox.append(empty_expandable_region);
-    empty_expandable_region.set_vexpand(true);
 
     win_vbox.append(menus_hbox);
 
