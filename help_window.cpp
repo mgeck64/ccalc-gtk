@@ -403,8 +403,8 @@ is described in the Scientific Notation topic.\n\
 \n\
 This entry field specifies the maximum precision (number of significant digits) \
 in which a number may be output. Affects floating point type (component of \
-complex type) numbers only. The default value is 25. The maximum is 100. The \
-value 0 is special and means full precision, including guard digits.\n\
+complex type) numbers only. The default value is 25. The value 0 is special and \
+means full precision (100 for decimal numbers).\n\
 \n\
 Note: This does not affect the precision of floating point numbers in \
 calculations, which are always performed using full precision. Thus, you can \
