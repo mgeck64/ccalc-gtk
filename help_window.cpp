@@ -411,7 +411,12 @@ means full precision, including guard digits.\n\
 This listbox specifies the word size for integer type numbers. 128 bits is the \
 default.\n\
 \n\
-Note: This does not affect complex type numbers.";
+Note: This does not affect complex type numbers.\n\
+\n\
+Note 2: If this settting is changed, any already defined integer type variables \
+will be unaffected (they will retain the word size they were defined with), but, \
+when used in a calculation, the value of a variable that was defined with a \
+word size larger than this setting will be truncated to this setting.";
 
 const char settings_textual_txt[] = "\
 Application settings may be specified textually by entering their codes into \
