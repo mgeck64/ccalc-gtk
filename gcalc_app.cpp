@@ -7,7 +7,7 @@
 #include "settings_window.hpp"
 
 gcalc_app::gcalc_app() :
-    Gtk::Application("ccalc-gtk.mgeck64.com.github"),
+    Gtk::Application("com.github.mgeck64.gcalc"),
     main_win(*this)
 {
     Glib::set_application_name("gcalc");

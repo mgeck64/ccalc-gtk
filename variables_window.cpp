@@ -13,13 +13,11 @@ variables_window::variables_window() {
     variables_scroller.set_margin(default_margin * 2);
     variables_scroller.set_child(variables_lbl);
 
-    variables_scroller.set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
-    // let window expand horizontially for wide content
-
     variables_lbl.set_halign(Gtk::Align::START);
     variables_lbl.set_valign(Gtk::Align::START);
     variables_lbl.set_expand(true);
     variables_lbl.set_wrap(true);
+    variables_lbl.set_wrap_mode(Pango::WrapMode::WORD_CHAR);
 }
 
 void variables_window::set(calc_parser::variables_itr begin, calc_parser::variables_itr end, const output_options& out_options) {

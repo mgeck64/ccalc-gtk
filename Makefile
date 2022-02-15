@@ -32,8 +32,13 @@ RELEXE = $(RELDIR)/$(EXE)
 RELOBJS = $(addprefix $(RELDIR)/, $(OBJS))
 RELDEPS = $(RELOBJS:%.o=%.d)
 RELFLAGS = -Os -DNDEBUG
+PREFIX = /usr/local
+DESKTOPDIR = /usr/share/applications
+DESKTOPNANE = com.github.mgeck64.$(EXE).desktop
+# DestDir, normally undefined, is to allow for staging installations to
+# temporary directories before# manually moving them to their actual place
 
-.PHONY: all clean debug release remake dbglink rellink
+.PHONY: all clean debug release remake dbglink rellink install uninstall
 
 # Default build
 all: release
@@ -79,6 +84,20 @@ $(RELDIR)/%.o: %.cpp
 
 $(RELDIR)/%.o: %.c
 		$(CC) -c $(CFLAGS) $(RELFLAGS) -MMD -o $@ $<
+
+#
+# Install/uninstall rules
+#
+
+install: $(RELDIR)/$(EXE)
+		mkdir -p $(DESTDIR)$(PREFIX)/bin
+		cp $< $(DESTDIR)$(PREFIX)/bin/$(EXE)
+		mkdir -p $(DESTDIR)$(DESKTOPDIR)
+		cp $(DESKTOPNANE) $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
+
+uninstall:
+		rm -f $(DESTDIR)$(PREFIX)/bin/$(EXE)
+		rm -f $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
 
 #
 # Other rules

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Icon=accessories-calculator
+Name=gcalc
+Comment=An advanced text-based calculator
+Exec=gcalc
+Terminal=false
+Type=Application
+Categories=Utility
+Keywords=calculation;arithmetic;scientific
+StartupNotify=true

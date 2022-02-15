@@ -18,13 +18,50 @@ main_window::main_window(gcalc_app& app_) :
     win_vbox(Gtk::Orientation::VERTICAL),
     content_vbox(Gtk::Orientation::VERTICAL),
     expr_hbox(Gtk::Orientation::HORIZONTAL),
-//    expr_btn("="),
     result_vbox(Gtk::Orientation::VERTICAL),
     in_out_info_hbox(Gtk::Orientation::HORIZONTAL),
     menus_hbox(Gtk::Orientation::HORIZONTAL),
     settings_btn("_Settings"),
     settings_storager(*this)
 {
+    set_titlebar(header_bar);
+    header_bar.set_title_widget(title_lbl);
+    title_lbl.set_markup(app_name_bold);
+
+    // the elaboration with using clear_result_hbox and clear_result_lbl is so
+    // the button will appear smaller than if the button was packed directly and
+    // the label was set directly:
+    header_bar.pack_start(clear_result_hbox);
+    clear_result_hbox.append(clear_result_btn);
+    clear_result_btn.set_child(clear_result_lbl);
+    clear_result_lbl.set_markup("<b>\u2a02</b>");
+    clear_result_btn.set_tooltip_text("Clear Expression and Result");
+    clear_result_btn.signal_clicked().connect(sigc::mem_fun(*this, &main_window::on_clear_result_btn_clicked));
+
+    {
+        auto more_action_group = Gio::SimpleActionGroup::create();
+        insert_action_group("more", more_action_group);
+
+        header_bar.pack_start(more_btn);
+        more_btn.set_icon_name("open-menu-symbolic");
+        more_btn.set_margin(0);
+        more_btn.set_tooltip_text("More");
+        more_btn.set_hexpand(false);
+
+        auto more_menu = Gio::Menu::create();
+        more_btn.set_menu_model(more_menu);
+
+        more_action_group->add_action("variables", sigc::mem_fun(*this, &main_window::on_variables_btn_clicked));
+        more_menu->append("Variables", "more.variables");
+
+        more_action_group->add_action("help", sigc::mem_fun(*this, &main_window::on_help_btn_clicked));
+        more_menu->append("Help", "more.help");
+        app.set_accel_for_action("more.help", "F1");
+
+        more_action_group->add_action("about", sigc::mem_fun(*this, &main_window::on_about_btn_clicked));
+        more_menu->append("About", "more.about");
+    }
+
     set_child(win_vbox);
 
     win_vbox.append(content_vbox);
@@ -57,6 +94,7 @@ main_window::main_window(gcalc_app& app_) :
     result_vbox.append(result_lbl);
     result_lbl.set_margin(default_margin);
     result_lbl.set_halign(Gtk::Align::START);
+    result_lbl.set_valign(Gtk::Align::START);
     result_lbl.set_selectable(true);
     result_lbl.set_wrap(true);
     result_lbl.set_wrap_mode(Pango::WrapMode::WORD_CHAR);
@@ -140,27 +178,6 @@ main_window::main_window(gcalc_app& app_) :
     settings_btn.set_use_underline(true);
     settings_btn.signal_clicked().connect(sigc::mem_fun(*this, &main_window::on_settings_btn_clicked));
 
-    {
-        auto more_action_group = Gio::SimpleActionGroup::create();
-        insert_action_group("more", more_action_group);
-
-        menus_hbox.append(more_btn);
-        more_btn.set_icon_name("open-menu-symbolic");
-        more_btn.set_margin(0);
-        more_btn.set_tooltip_text("More");
-        more_btn.set_hexpand(false);
-
-        auto more_menu = Gio::Menu::create();
-        more_btn.set_menu_model(more_menu);
-
-        more_action_group->add_action("variables", sigc::mem_fun(*this, &main_window::on_variables_btn_clicked));
-        more_menu->append("Variables", "more.variables");
-
-        more_action_group->add_action("help", sigc::mem_fun(*this, &main_window::on_help_btn_clicked));
-        more_menu->append("Help", "more.help");
-        app.set_accel_for_action("more.help", "F1");
-    }
-
     settings_storager.load(parse_options, out_options);
     parser.options(parse_options);
 
@@ -241,8 +258,10 @@ auto main_window::recall_history(bool direction_up) -> void {
         expr_entry.set_position(text.size());
     } else
         expr_entry.set_text(Glib::ustring());
-    result_lbl.set_text(Glib::ustring());
-    last_result_kind = none_kind;
+    if (last_result_kind == parse_error_kind) {
+        result_lbl.set_text(Glib::ustring());
+        last_result_kind = none_kind;
+    }
 }
 
 auto main_window::on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType) -> bool {
@@ -271,6 +290,19 @@ auto main_window::on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierTy
         default:
             return false;
     }
+}
+
+auto main_window::on_clear_result_btn_clicked() -> void {
+    expr_entry.set_text(Glib::ustring());
+    result_lbl.set_label(Glib::ustring());
+    last_result_kind = none_kind;
+
+    // set_default_size(-1, -1);
+    // if the user resizes the window, causes this to be performed, and then
+    // switches to another window then this will be undone--this window will
+    // revert to the size the user resized it
+
+    expr_entry.grab_focus_without_selecting();
 }
 
 auto main_window::on_expr_btn_clicked() -> void {
@@ -317,6 +349,30 @@ auto main_window::on_variables_btn_clicked() -> void {
 
 auto main_window::on_help_btn_clicked() -> void {
     app.help(this, help_window::quick_start_idx, false);
+}
+
+auto main_window::on_about_btn_clicked() -> void {
+    if (!about_dlg_initialized) {
+        about_dlg.set_transient_for(*this);
+        about_dlg.set_hide_on_close(true);
+        about_dlg.set_modal(true);
+
+        about_dlg.set_logo_icon_name(app_icon);
+        about_dlg.set_program_name(app_name);
+        about_dlg.set_version(app_version);
+        about_dlg.set_copyright(app_copyright);
+        about_dlg.set_comments("An advanced text-based calculator");
+        about_dlg.set_website("https://github.com/mgeck64/ccalc-gtk");
+        about_dlg.set_license_type(Gtk::License::GPL_3_0);
+
+        Glib::OptionGroup::vecustrings authors;
+        authors.emplace_back("Mark Geck");
+        about_dlg.set_authors(authors);
+
+        about_dlg_initialized = true;
+    }
+    about_dlg.show();
+    expr_entry.grab_focus_without_selecting();
 }
 
 auto main_window::on_variables_changed() -> void {

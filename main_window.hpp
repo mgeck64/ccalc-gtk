@@ -13,6 +13,8 @@
 #include <gtkmm/frame.h>
 #include <gtkmm/label.h>
 #include <gtkmm/comboboxtext.h>
+#include <gtkmm/headerbar.h>
+#include <gtkmm/aboutdialog.h>
 
 #include <vector>
 
@@ -31,6 +33,12 @@ public:
  
 private:
     gcalc_app& app;
+    Gtk::HeaderBar header_bar;
+    Gtk::Label title_lbl;
+    Gtk::Box clear_result_hbox;
+    Gtk::Button clear_result_btn;
+    Gtk::Label clear_result_lbl;
+    Gtk::MenuButton more_btn;
     Gtk::Box win_vbox;
     Gtk::Box content_vbox;
     Gtk::Box expr_hbox;
@@ -48,7 +56,8 @@ private:
     Gtk::MenuButton functions_a_btn;
     Gtk::MenuButton functions_b_btn;
     Gtk::Button settings_btn;
-    Gtk::MenuButton more_btn;
+    Gtk::AboutDialog about_dlg;
+    bool about_dlg_initialized = false;
 
     settings_storage settings_storager;
 
@@ -56,12 +65,14 @@ private:
     auto show_output_info() -> void;
     auto append_history(const Glib::ustring& expr_str) -> void;
     auto recall_history(bool direction_up) -> void;
+    auto on_clear_result_btn_clicked() -> void;
     auto on_expr_entry_key_pressed(guint keyval, guint, Gdk::ModifierType) -> bool;
     auto on_expr_btn_clicked() -> void;
     auto on_function_action(const char* label) -> void;
     auto on_settings_btn_clicked() -> void;
     auto on_variables_btn_clicked() -> void;
     auto on_help_btn_clicked() -> void;
+    auto on_about_btn_clicked() -> void;
     auto on_variables_changed() -> void;
 
     parser_options parse_options;
