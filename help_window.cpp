@@ -22,18 +22,15 @@ help_window::help_window(int topic_idx) :
     prev_topic_btn("\u25b2"),
     next_topic_btn("\u25bc")
 {
+    set_title("Basic Guide");
     set_default_size(550, 500);
 
     vbox.set_margin(default_margin);
     set_child(vbox);
 
-    title_lbl.set_margin(default_margin);
-    title_lbl.set_halign(Gtk::Align::START);
-    title_lbl.set_markup("<big><b>Basic guide</b></big>");
-    vbox.append(title_lbl);
-
     vbox.append(top_hbox);
 
+    top_hbox.append(topics_cb);
     topics_cb.set_margin(default_margin);
     topics_cb.set_hexpand(true);
     topics_cb.append("Quick Start");
@@ -48,17 +45,16 @@ help_window::help_window(int topic_idx) :
     topics_cb.append("Settings Window");
     topics_cb.append("Settings -- Textual Input");
     topics_cb.signal_changed().connect(sigc::mem_fun(*this, &help_window::on_topics_changed));
-    top_hbox.append(topics_cb);
 
+    top_hbox.append(prev_topic_btn);
     prev_topic_btn.set_margin(default_margin);
     prev_topic_btn.set_margin_end(0);
     prev_topic_btn.signal_clicked().connect(sigc::mem_fun(*this, &help_window::on_prev_topic_clicked));
-    top_hbox.append(prev_topic_btn);
 
+    top_hbox.append(next_topic_btn);
     next_topic_btn.set_margin(default_margin);
     next_topic_btn.set_margin_start(0);
     next_topic_btn.signal_clicked().connect(sigc::mem_fun(*this, &help_window::on_next_topic_clicked));
-    top_hbox.append(next_topic_btn);
 
     {
         auto setup = [&](Gtk::ScrolledWindow& swin, Gtk::Label& lbl, const char* txt) {

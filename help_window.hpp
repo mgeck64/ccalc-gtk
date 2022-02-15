@@ -20,7 +20,6 @@ public:
 
 private:
     Gtk::Box vbox;
-    Gtk::Label title_lbl;
     Gtk::Box top_hbox;
     Gtk::ComboBoxText topics_cb;
     Gtk::Button prev_topic_btn;

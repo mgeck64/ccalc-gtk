@@ -16,8 +16,6 @@ public:
     void set(calc_parser::variables_itr begin, calc_parser::variables_itr end, const output_options& out_options);
 
 private:
-    Gtk::Box content_vbox;
-    Gtk::Label title_lbl;
     Gtk::ScrolledWindow variables_scroller;
     Gtk::Label variables_lbl;
 };

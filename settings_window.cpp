@@ -20,20 +20,15 @@ settings_window::settings_window(gcalc_app& app_, main_window& main_win_) :
     defaults_btn("_Defaults"),
     cancel_btn("_Cancel")
 {
+    set_title("Settings");
     set_resizable(false);
     set_child(win_vbox);
 
     win_vbox.append(content_vbox);
     content_vbox.set_margin(default_margin);
 
-    content_vbox.append(title_lbl);
-    title_lbl.set_margin(default_margin);
-    title_lbl.set_markup("<big><b>Settings</b></big>");
-    title_lbl.set_halign(Gtk::Align::START);
-
     content_vbox.append(settings_grid);
     settings_grid.set_margin(default_margin);
-    settings_grid.set_margin_top(division_top_margin);
     settings_grid.set_row_spacing(division_top_margin);
     settings_grid.set_column_spacing(default_margin);
 

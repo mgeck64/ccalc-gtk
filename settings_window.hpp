@@ -34,7 +34,6 @@ private:
     main_window& main_win;
     Gtk::Box win_vbox;
     Gtk::Box content_vbox;
-    Gtk::Label title_lbl;
     Gtk::Box input_defaults_vbox;
     Gtk::Box input_defaults_hbox;
     Gtk::Label input_defaults_lbl;

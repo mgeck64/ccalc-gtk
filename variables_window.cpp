@@ -5,21 +5,12 @@
 
 #include "ccalc/calc_outputter.hpp"
 
-variables_window::variables_window() :
-    content_vbox(Gtk::Orientation::VERTICAL)
-{
-    set_default_size(200, 250);
+variables_window::variables_window() {
+    set_title("Variables");
+    set_default_size(250, 250);
 
-    set_child(content_vbox);
-    content_vbox.set_margin(default_margin);
-
-    content_vbox.append(title_lbl);
-    title_lbl.set_margin(default_margin);
-    title_lbl.set_markup("<big><b>Variables</b></big>");
-    title_lbl.set_halign(Gtk::Align::START);
-
-    content_vbox.append(variables_scroller);
-    variables_scroller.set_margin(default_margin);
+    set_child(variables_scroller);
+    variables_scroller.set_margin(default_margin * 2);
     variables_scroller.set_child(variables_lbl);
 
     variables_scroller.set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
