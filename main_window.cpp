@@ -24,7 +24,7 @@ main_window::main_window(gcalc_app& app_) :
     menus_hbox(Gtk::Orientation::HORIZONTAL),
     settings_btn("_Settings"),
     settings_storager(*this)
- {
+{
     set_child(win_vbox);
 
     win_vbox.append(content_vbox);
