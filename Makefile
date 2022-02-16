@@ -36,7 +36,7 @@ PREFIX = /usr/local
 DESKTOPDIR = /usr/share/applications
 DESKTOPNANE = com.github.mgeck64.$(EXE).desktop
 # DestDir, normally undefined, is to allow for staging installations to
-# temporary directories before# manually moving them to their actual place
+# temporary directories before manually moving them to their actual place
 
 .PHONY: all clean debug release remake dbglink rellink install uninstall
 
