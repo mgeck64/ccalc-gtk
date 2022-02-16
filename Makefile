@@ -90,10 +90,8 @@ $(RELDIR)/%.o: %.c
 #
 
 install: $(RELDIR)/$(EXE)
-		mkdir -p $(DESTDIR)$(PREFIX)/bin
-		cp $< $(DESTDIR)$(PREFIX)/bin/$(EXE)
-		mkdir -p $(DESTDIR)$(DESKTOPDIR)
-		cp $(DESKTOPNANE) $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
+		install -D $< $(DESTDIR)$(PREFIX)/bin/$(EXE)
+		install -D $(DESKTOPNANE) $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
 
 uninstall:
 		rm -f $(DESTDIR)$(PREFIX)/bin/$(EXE)
