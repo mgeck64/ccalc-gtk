@@ -1,13 +1,14 @@
 #include "gcalc_app.hpp"
-#include <glibmm/miscutils.h>
-
+#include "gcalc_basics.hpp"
 #include "main_window.hpp"
 #include "help_window.hpp"
 #include "variables_window.hpp"
 #include "settings_window.hpp"
 
+#include <glibmm/miscutils.h>
+
 gcalc_app::gcalc_app() :
-    Gtk::Application("com.github.mgeck64.gcalc"),
+    Gtk::Application(app_id),
     main_win(*this)
 {
     Glib::set_application_name("gcalc");
