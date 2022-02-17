@@ -14,6 +14,7 @@ CPPSRCS = $(wildcard *.cpp)
 CSRCS = $(wildcard *.c)
 OBJS = $(CPPSRCS:.cpp=.o) $(CSRCS:.c=.o)
 EXE = gcalc
+DESKTOPNANE = com.github.mgeck64.GCalc.desktop
 
 #
 # Debug build settings
@@ -34,7 +35,6 @@ RELDEPS = $(RELOBJS:%.o=%.d)
 RELFLAGS = -Os -DNDEBUG
 PREFIX = /usr/local
 DESKTOPDIR = /usr/share/applications
-DESKTOPNANE = com.github.mgeck64.$(EXE).desktop
 # DestDir, normally undefined, is to allow for staging installations to
 # temporary directories before manually moving them to their actual place
 
