@@ -1,4 +1,5 @@
 #include "settings_storage.hpp"
+#include "gcalc_basics.hpp"
 #include <filesystem>
 
 namespace pt = boost::property_tree;
@@ -26,7 +27,9 @@ static auto file_path() -> std::string {
 }
 
 static inline auto append_filename_to(std::string &path) -> std::string& {
-    path += "/gcalc.conf";
+    path += "/";
+    path += app_id;
+    path += ".conf";
     return path;
 }
 
