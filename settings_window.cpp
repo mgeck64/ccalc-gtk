@@ -136,6 +136,8 @@ auto settings_window::update_from(
 // force = false: update option widgets only for options that have changed, thus
 // any other pending changes by the user will be preserved
 {
+    auto t = temporarily_suppress_on_setting_changed(*this);
+
     if (force || parse_options.default_number_type_code != new_parse_options.default_number_type_code)
         switch (new_parse_options.default_number_type_code) {
             case calc_val::int_code: default_number_type_code_cb.set_active(0); break;
@@ -177,8 +179,11 @@ auto settings_window::update_from(
 
 auto settings_window::on_setting_changed() -> void {
 // this is a crude handler but which should be more than performant enough; the
-// main_win.options call below should be optimized to write the settings only if
-// they have changed
+// main_win.options call below is optimized to write the settings only if they
+// have changed
+    if (suppress_on_setting_changed)
+        return;
+
     auto [parse_options, out_options] = main_win.options();
 
     switch (default_number_type_code_cb.get_active_row_number()) {

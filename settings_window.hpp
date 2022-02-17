@@ -54,6 +54,17 @@ private:
     Gtk::Button cancel_btn;
 
     auto on_setting_changed() -> void;
+    bool suppress_on_setting_changed = false;
+    class temporarily_suppress_on_setting_changed {
+        bool& suppress_on_setting_changed;
+    public:
+        temporarily_suppress_on_setting_changed(settings_window& w)
+            : suppress_on_setting_changed(w.suppress_on_setting_changed)
+            {suppress_on_setting_changed = true;}
+        ~temporarily_suppress_on_setting_changed() 
+            {suppress_on_setting_changed = false;}
+    };
+
     auto on_help_btn_clicked() -> void;
     auto on_defaults_btn_clicked() -> void;
 };
