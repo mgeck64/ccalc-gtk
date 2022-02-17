@@ -22,7 +22,7 @@ library) are assumed to be discoverable in the lib path; e.g., located in
 symbolic links to the library files in my ccalc-lib project directory (built in
 lib there).
 
-This project also depends on gtkmm 4 for the GUI frontend.
+This project also depends on gtkmm-4.0 for the GUI frontend.
 
 This project also depends on Boost; see ccalc-lib for more information.
 
