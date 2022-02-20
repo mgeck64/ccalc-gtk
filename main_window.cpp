@@ -83,9 +83,10 @@ main_window::main_window(gcalc_app& app_) :
     expr_hbox.append(expr_btn);
     expr_btn.set_margin(default_margin);
     expr_btn.set_child(expr_btn_lbl);
-    expr_btn_lbl.set_markup("<big>=</big>");
     // putting the label in the button this way instead of in the ctor that
-    // takes a string causes the button to take less space!
+    // takes a string causes the button to have smaller width, which we want
+
+    expr_btn_lbl.set_markup("<big>=</big>");
     expr_btn.signal_clicked().connect(sigc::mem_fun(*this, &main_window::on_expr_btn_clicked));
 
     content_vbox.append(result_frame);
