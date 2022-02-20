@@ -6,5 +6,5 @@ Exec=gcalc
 Terminal=false
 Type=Application
 Categories=Utility
-Keywords=calculation;arithmetic;scientific
+Keywords=calculation;arithmetic;scientific;complex
 StartupNotify=true
