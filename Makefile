@@ -1,6 +1,7 @@
 #
 # Compiler flags
 #
+
 CCXX   = g++
 CC     = gcc
 CXXFLAGS = `pkg-config gtkmm-4.0 --cflags` -Wall -Werror -Wextra -std=gnu++20
@@ -10,6 +11,7 @@ GTKLIBS = `pkg-config gtkmm-4.0 --libs`
 #
 # Project files
 #
+
 CPPSRCS = $(wildcard *.cpp)
 CSRCS = $(wildcard *.c)
 OBJS = $(CPPSRCS:.cpp=.o) $(CSRCS:.c=.o)
@@ -19,6 +21,7 @@ DESKTOPNANE = com.github.mgeck64.GCalc.desktop
 #
 # Debug build settings
 #
+
 DBGDIR = debug
 DBGEXE = $(DBGDIR)/$(EXE)
 DBGOBJS = $(addprefix $(DBGDIR)/, $(OBJS))
@@ -28,6 +31,7 @@ DBGFLAGS = -g -O0 -DDEBUG
 #
 # Release build settings
 #
+
 RELDIR = release
 RELEXE = $(RELDIR)/$(EXE)
 RELOBJS = $(addprefix $(RELDIR)/, $(OBJS))
@@ -46,6 +50,7 @@ all: release
 #
 # Debug rules
 #
+
 DBGLINK = $(CCXX) -o $(DBGEXE) $(DBGOBJS) -lccalc-dbg $(GTKLIBS)
 
 debug: make_dbgdir $(DBGEXE)
@@ -67,6 +72,7 @@ $(DBGDIR)/%.o: %.c
 #
 # Release rules
 #
+
 RELLINK = $(CCXX) -o $(RELEXE) $(RELOBJS) -lccalc-rel $(GTKLIBS)
 
 release: make_reldir $(RELEXE)
@@ -90,16 +96,17 @@ $(RELDIR)/%.o: %.c
 #
 
 install: $(RELDIR)/$(EXE)
-		install -D $< $(DESTDIR)$(PREFIX)/bin/$(EXE)
-		install -D $(DESKTOPNANE) $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
+		sudo install -D $< $(DESTDIR)$(PREFIX)/bin/$(EXE)
+		sudo install -D $(DESKTOPNANE) $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
 
 uninstall:
-		rm -f $(DESTDIR)$(PREFIX)/bin/$(EXE)
-		rm -f $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
+		sudo rm -f $(DESTDIR)$(PREFIX)/bin/$(EXE)
+		sudo rm -f $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
 
 #
 # Other rules
 #
+
 make_dbgdir:
 		@mkdir -p $(DBGDIR)
 
