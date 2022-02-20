@@ -37,7 +37,7 @@ RELEXE = $(RELDIR)/$(EXE)
 RELOBJS = $(addprefix $(RELDIR)/, $(OBJS))
 RELDEPS = $(RELOBJS:%.o=%.d)
 RELFLAGS = -Os -DNDEBUG
-PREFIX = /usr/local
+PREFIX = /usr
 DESKTOPDIR = /usr/share/applications
 # DestDir, normally undefined, is to allow for staging installations to
 # temporary directories before manually moving them to their actual place
@@ -45,7 +45,7 @@ DESKTOPDIR = /usr/share/applications
 .PHONY: all clean debug release remake dbglink rellink install uninstall
 
 # Default build
-all: release
+all: install
 
 #
 # Debug rules
