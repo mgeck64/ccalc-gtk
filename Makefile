@@ -55,19 +55,19 @@ DBGLINK = $(CCXX) -o $(DBGEXE) $(DBGOBJS) -lccalc-dbg $(GTKLIBS)
 
 debug: make_dbgdir $(DBGEXE)
 
-dbglink:
-		$(DBGLINK)
+dbglink: make_dbgdir $(DBGOBJS) # re-link ccalc library
+	$(DBGLINK)
 
 $(DBGEXE): $(DBGOBJS)
-		$(DBGLINK)
+	$(DBGLINK)
 
 -include $(DBGDEPS)
 
 $(DBGDIR)/%.o: %.cpp
-		$(CCXX) -c $(CXXFLAGS) $(DBGFLAGS) -MMD -o $@ $<
+	$(CCXX) -c $(CXXFLAGS) $(DBGFLAGS) -MMD -o $@ $<
 
 $(DBGDIR)/%.o: %.c
-		$(CC) -c $(CFLAGS) $(DBGFLAGS) -MMD -o $@ $<
+	$(CC) -c $(CFLAGS) $(DBGFLAGS) -MMD -o $@ $<
 
 #
 # Release rules
@@ -77,44 +77,44 @@ RELLINK = $(CCXX) -o $(RELEXE) $(RELOBJS) -lccalc-rel $(GTKLIBS)
 
 release: make_reldir $(RELEXE)
 
-rellink:
-		$(RELLINK)
+rellink: make_reldir $(RELOBJS) # re-link ccalc library
+	$(RELLINK)
 
 $(RELEXE): $(RELOBJS)
-		$(RELLINK)
+	$(RELLINK)
 
 -include $(RELDEPS)
 
 $(RELDIR)/%.o: %.cpp
-		$(CCXX) -c $(CXXFLAGS) $(RELFLAGS) -MMD -o $@ $<
+	$(CCXX) -c $(CXXFLAGS) $(RELFLAGS) -MMD -o $@ $<
 
 $(RELDIR)/%.o: %.c
-		$(CC) -c $(CFLAGS) $(RELFLAGS) -MMD -o $@ $<
+	$(CC) -c $(CFLAGS) $(RELFLAGS) -MMD -o $@ $<
 
 #
 # Install/uninstall rules
 #
 
 install: $(RELDIR)/$(EXE)
-		sudo install -D $< $(DESTDIR)$(PREFIX)/bin/$(EXE)
-		sudo install -D $(DESKTOPNANE) $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
+	sudo install -D $< $(DESTDIR)$(PREFIX)/bin/$(EXE)
+	sudo install -D $(DESKTOPNANE) $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
 
 uninstall:
-		sudo rm -f $(DESTDIR)$(PREFIX)/bin/$(EXE)
-		sudo rm -f $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
+	sudo rm -f $(DESTDIR)$(PREFIX)/bin/$(EXE)
+	sudo rm -f $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
 
 #
 # Other rules
 #
 
 make_dbgdir:
-		@mkdir -p $(DBGDIR)
+	@mkdir -p $(DBGDIR)
 
 make_reldir:
-		@mkdir -p $(RELDIR)
+	@mkdir -p $(RELDIR)
 
 remake: clean all
 
 
 clean:
-		@rm -r -f $(RELDIR) $(DBGDIR)
+	@rm -r -f $(RELDIR) $(DBGDIR)
