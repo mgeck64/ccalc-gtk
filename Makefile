@@ -98,12 +98,12 @@ $(RELDIR)/%.o: %.c
 #
 
 install: make_reldir $(RELDIR)/$(EXE)
-	sudo install -D $(RELDIR)/$(EXE) $(DESTDIR)$(PREFIX)/bin/$(EXE)
-	sudo install -D $(DESKTOPNANE) $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
+	install -D $(RELDIR)/$(EXE) $(DESTDIR)$(PREFIX)/bin/$(EXE)
+	install -D $(DESKTOPNANE) $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
 
 uninstall:
-	sudo rm -f $(DESTDIR)$(PREFIX)/bin/$(EXE)
-	sudo rm -f $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(EXE)
+	rm -f $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
 
 #
 # Other rules
