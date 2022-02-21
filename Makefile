@@ -40,7 +40,7 @@ RELEXE = $(RELDIR)/$(EXE)
 RELOBJS = $(addprefix $(RELDIR)/, $(OBJS))
 RELDEPS = $(RELOBJS:%.o=%.d)
 RELFLAGS = -Os -DNDEBUG
-DESKTOPDIR = /usr/share/applications
+DESKTOPDIR = $(PREFIX)/share/applications
 # set DestDir to allow for staging installations to temporary directories before
 # manually moving them to their actual place
 
