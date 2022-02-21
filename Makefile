@@ -4,7 +4,7 @@
 
 CCXX   = g++
 CC     = gcc
-CXXFLAGS = `pkg-config gtkmm-4.0 --cflags` -Wall -Werror -Wextra -std=gnu++20
+CXXFLAGS = `pkg-config gtkmm-4.0 --cflags` -Wall -Werror -Wextra -std=gnu++20 -isystem /usr/local/include/boost_1_74_0
 CFLAGS   = -Wall -Werror -Wextra
 GTKLIBS = `pkg-config gtkmm-4.0 --libs`
 
@@ -95,8 +95,8 @@ $(RELDIR)/%.o: %.c
 # Install/uninstall rules
 #
 
-install: $(RELDIR)/$(EXE)
-	sudo install -D $< $(DESTDIR)$(PREFIX)/bin/$(EXE)
+install: make_reldir $(RELDIR)/$(EXE)
+	sudo install -D $(RELDIR)/$(EXE) $(DESTDIR)$(PREFIX)/bin/$(EXE)
 	sudo install -D $(DESKTOPNANE) $(DESTDIR)$(DESKTOPDIR)/$(DESKTOPNANE)
 
 uninstall:
