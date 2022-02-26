@@ -16,9 +16,12 @@ developed for Gtk 4 (gtkmm-4); it is having a number of issues related to Gtk 4:
 - Warnings about missed dependencies when loading
 - Initial window size is sometimes wrong
 - Gtk 4, which is still new, is not available in Ubuntu (21.10)
-Thus, I ported this to work with the more stable Gtk 3 (repo ccalc-gtk3); that
-version is having none of these issues, and thus this version is frozen and new
-development is happening in ccalc-gtk3.
+Moreover, Gtk 3 (and gtkmm-3) is 'built in' to Manjaro (21.2) and Ubuntu
+(21.10), which is not the case for Gtk 4, and thus no other libraries are
+required to run the app in those distros. Thus, I ported this to work with the
+more stable and convenient to use Gtk 3 (repo ccalc-gtk3); that version is
+having none of these issues, and thus this version is frozen and new development
+is happening in ccalc-gtk3. (2/25/22)
 ## Dependencies
 This project depends on another of my projects, ccalc-lib; that project provides
 the backend to this project's GUI frontend.
