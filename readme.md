@@ -21,7 +21,7 @@ Moreover, Gtk 3 (and gtkmm-3) is 'built in' to Manjaro (21.2) and Ubuntu
 required to run the app in those distros. Thus, I ported this to work with the
 more stable and convenient to use Gtk 3 (repo ccalc-gtk3); that version is
 having none of these issues, and thus this version is frozen and new development
-is happening in ccalc-gtk3. (2/25/22)
+is happening in ccalc-gtk3. (Written on 2/25/22.)
 ## Dependencies
 This project depends on another of my projects, ccalc-lib; that project provides
 the backend to this project's GUI frontend.
